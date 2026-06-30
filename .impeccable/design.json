@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-30T14:14:00Z",
+  "title": "Design System: SLM Immersive Reader",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Pine Canopy", "canonical": "oklch(28% 0.04 155)", "tonalRamp": ["#06110d", "#0c2018", "#122f24", "#183e2f", "#2c6c53", "#4c9b7b", "#86cca9", "#d0f0e1"] },
+      "accent": { "role": "accent", "displayName": "Terracotta Clay", "canonical": "oklch(53% 0.14 42)", "tonalRamp": ["#361b12", "#5e2f1e", "#86442b", "#b25e43", "#c58069", "#d8a392", "#ebc5ba", "#f9e8e4"] },
+      "neutral-bg": { "role": "neutral", "displayName": "Warm Alabaster", "canonical": "oklch(98% 0.005 75)", "tonalRamp": ["#ebe8df", "#f0ede5", "#f5f2eb", "#fbfaf7", "#fcfcfb", "#fdfdfd", "#fefefe", "#ffffff"] },
+      "neutral-card": { "role": "neutral", "displayName": "Pure White", "canonical": "oklch(100% 0 0)", "tonalRamp": ["#ebebeb", "#f0f0f0", "#f5f5f5", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display Heading", "purpose": "Main headers and title banners." },
+      "body": { "displayName": "Reading Body", "purpose": "The main foreign passage reading view." },
+      "label": { "displayName": "Labels & Controls", "purpose": "Eyebrows, stats markers, and button labels." }
+    },
+    "shadows": [
+      { "name": "popover-shadow", "value": "0 8px 30px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02)", "purpose": "Translation tooltip popups and card elevations." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "General transitions." },
+      { "name": "ease-out-quint", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Entrance transitions (fade-in, popups)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High emphasis actions such as generating the layout.",
+      "html": "<button class=\"ds-btn-primary\">Generate Layout</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background-color: #163c2e; color: #fbfaf7; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; font-weight: 600; padding: 10px 24px; border: none; border-radius: 9999px; cursor: pointer; transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-primary:hover { background-color: #b25e43; } .ds-btn-primary:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Reading Card",
+      "kind": "card",
+      "refersTo": "reading-card",
+      "description": "The workspace panels for inputting and reading texts.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Passage</h3><p class=\"ds-card-text\">Interactive text goes here...</p></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 24px; box-shadow: none; display: flex; flex-direction: column; gap: 12px; } .ds-card-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #1a1c1b; margin: 0; } .ds-card-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; color: #5a5e5c; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Reader's Sanctuary",
+    "overview": "The SLM visual identity is built around the feeling of a quiet, premium reading room. It rejects the hyper-stimulated, neon-heavy, gamified conventions of modern language learning tools. Spacing is generous, typography is elegant and editorial, and focus is preserved by maintaining a single, highly refined warm alabaster paper theme.",
+    "keyCharacteristics": [
+      "Single, unified warm paper theme (no distracting theme toggling).",
+      "Restrained natural colors (deep pine green, terracotta, and soft stone alabaster).",
+      "High-contrast, high-legibility typographic pairing (Serif display/prose + Sans-serif interface).",
+      "State transitions that feel organic and tactile.",
+      "Spacious layouts with clear visual breathing room."
+    ],
+    "rules": [
+      { "name": "The Ten Percent Rule", "body": "The Terracotta accent must represent no more than 10% of any screen surface. It should act strictly as a point-of-focus highlights.", "section": "colors" },
+      { "name": "The Flat-By-Default Rule", "body": "Shadows are prohibited at rest. Fine borders (1px) in neutral shades are used for containers. Soft, diffuse shadows appear exclusively to indicate interactivity.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do wrap reading passages in a container that enforces a maximum width of 70ch to prevent eye fatigue.",
+      "Do ensure vocabulary annotations maintain a minimum contrast ratio of 4.5:1 against the card background.",
+      "Do use text-wrap: balance for display headings to avoid awkward single-word orphans."
+    ],
+    "donts": [
+      "Don't use neon yellows, greens, or high-intensity purples for vocabulary statuses.",
+      "Don't use thick colored borders (greater than 1px) to accent active cards.",
+      "Don't apply any hover scale/transform transitions on images or reading passages.",
+      "Don't use standard sans-serif font families for the primary reading text when in Reader mode."
+    ]
+  }
+}

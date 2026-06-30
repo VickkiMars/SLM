@@ -1,0 +1,808 @@
+{
+  "metadata": {
+    "url": "https://www.skills.google/paths",
+    "extractedAt": "2026-06-25T15:52:00Z",
+    "viewportWidth": 1920,
+    "viewportHeight": 1080,
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "designSystem": {
+    "colors": {
+      "primaries": [
+        {
+          "name": "Google Blue",
+          "value": "#0b57d0",
+          "usage": [
+            "Primary filled button background",
+            "Active states",
+            "Hover text on outlined buttons"
+          ]
+        },
+        {
+          "name": "Google Light Blue",
+          "value": "#1a73e8",
+          "usage": [
+            "Default link color",
+            "Secondary interactive states"
+          ]
+        }
+      ],
+      "neutrals": [
+        {
+          "name": "Dark Charcoal",
+          "value": "#1f1f1f",
+          "usage": [
+            "High emphasis text",
+            "Heading colors"
+          ]
+        },
+        {
+          "name": "Dark Gray",
+          "value": "#3c4043",
+          "usage": [
+            "Medium emphasis text",
+            "Subheaders",
+            "Descriptions"
+          ]
+        },
+        {
+          "name": "Body Text Gray",
+          "value": "#444746",
+          "usage": [
+            "Normal body text",
+            "Secondary descriptions"
+          ]
+        },
+        {
+          "name": "Border Gray",
+          "value": "#747775",
+          "usage": [
+            "Outlined button borders",
+            "Search bar icon"
+          ]
+        },
+        {
+          "name": "White",
+          "value": "#ffffff",
+          "usage": [
+            "Card background",
+            "Header background",
+            "Sidenav background"
+          ]
+        },
+        {
+          "name": "Search Background",
+          "value": "#f1f3f4",
+          "usage": [
+            "Search pill background",
+            "Inactive input background"
+          ]
+        },
+        {
+          "name": "Chip Inactive Background",
+          "value": "#f8fafd",
+          "usage": [
+            "Inactive category chip background"
+          ]
+        },
+        {
+          "name": "Active Sidenav Background",
+          "value": "#d3e3fd",
+          "usage": [
+            "Selected navigation pill background"
+          ]
+        },
+        {
+          "name": "Light Page Background",
+          "value": "#f0f4f9",
+          "usage": [
+            "Page background",
+            "Hero section backing"
+          ]
+        }
+      ],
+      "accents": [
+        {
+          "name": "Google Red",
+          "value": "#ea4335",
+          "usage": [
+            "Google branded text accents"
+          ]
+        },
+        {
+          "name": "Google Purple",
+          "value": "#a142f4",
+          "usage": [
+            "Google branded text accents"
+          ]
+        },
+        {
+          "name": "Google Green",
+          "value": "#34a853",
+          "usage": [
+            "Google branded text accents",
+            "Success icons"
+          ]
+        },
+        {
+          "name": "Google Yellow",
+          "value": "#f9ab00",
+          "usage": [
+            "Google branded text accents",
+            "Star ratings"
+          ]
+        }
+      ],
+      "semantic": {
+        "success": "#188038",
+        "error": "#d93025",
+        "warning": "#f9ab00",
+        "info": "#1a73e8"
+      },
+      "gradients": [
+        {
+          "name": "Google Color Text Accent",
+          "value": "linear-gradient(90deg, #4285f4, #a142f4, #ea4335)",
+          "usage": [
+            "Highlighting text like 'future' in hero"
+          ]
+        }
+      ],
+      "backgrounds": [
+        {
+          "element": "body",
+          "value": "#f0f4f9"
+        },
+        {
+          "element": "header",
+          "value": "#ffffff"
+        },
+        {
+          "element": "card",
+          "value": "#ffffff"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "name": "Google Sans",
+          "faces": [
+            "Google Sans Bold",
+            "Google Sans Medium"
+          ],
+          "source": "custom"
+        },
+        {
+          "name": "Google Sans Text",
+          "faces": [
+            "Google Sans Text Regular",
+            "Google Sans Text Medium"
+          ],
+          "source": "custom"
+        },
+        {
+          "name": "Roboto",
+          "faces": [
+            "Roboto Regular",
+            "Roboto Medium"
+          ],
+          "source": "google"
+        }
+      ],
+      "fontSizes": {
+        "min": "0.75rem",
+        "max": "3.5rem",
+        "scale": [
+          {
+            "name": "xs",
+            "size": "0.75rem",
+            "lineHeight": 1.33,
+            "letterSpacing": "0.04em",
+            "fontWeight": 500
+          },
+          {
+            "name": "sm",
+            "size": "0.875rem",
+            "lineHeight": 1.43,
+            "letterSpacing": "0.018em",
+            "fontWeight": 400
+          },
+          {
+            "name": "base",
+            "size": "1rem",
+            "lineHeight": 1.5,
+            "letterSpacing": "0.01em",
+            "fontWeight": 400
+          },
+          {
+            "name": "lg",
+            "size": "1.125rem",
+            "lineHeight": 1.44,
+            "letterSpacing": "0em",
+            "fontWeight": 500
+          },
+          {
+            "name": "xl",
+            "size": "1.375rem",
+            "lineHeight": 1.27,
+            "letterSpacing": "0em",
+            "fontWeight": 500
+          },
+          {
+            "name": "2xl",
+            "size": "1.75rem",
+            "lineHeight": 1.28,
+            "letterSpacing": "0em",
+            "fontWeight": 400
+          },
+          {
+            "name": "3xl",
+            "size": "2.25rem",
+            "lineHeight": 1.22,
+            "letterSpacing": "0em",
+            "fontWeight": 400
+          },
+          {
+            "name": "4xl",
+            "size": "3.5rem",
+            "lineHeight": 1.15,
+            "letterSpacing": "-0.01em",
+            "fontWeight": 700
+          }
+        ]
+      },
+      "headings": {
+        "h1": {
+          "size": "3.5rem",
+          "weight": 700,
+          "lineHeight": 1.15,
+          "letterSpacing": "-0.01em",
+          "marginBottom": "1.5rem"
+        },
+        "h2": {
+          "size": "2.25rem",
+          "weight": 400,
+          "lineHeight": 1.22,
+          "letterSpacing": "0rem",
+          "marginBottom": "1rem"
+        },
+        "h3": {
+          "size": "1.75rem",
+          "weight": 400,
+          "lineHeight": 1.28,
+          "letterSpacing": "0rem",
+          "marginBottom": "0.75rem"
+        },
+        "h4": {
+          "size": "1.375rem",
+          "weight": 500,
+          "lineHeight": 1.27,
+          "letterSpacing": "0rem",
+          "marginBottom": "0.5rem"
+        },
+        "h5": {
+          "size": "1.125rem",
+          "weight": 500,
+          "lineHeight": 1.44,
+          "letterSpacing": "0rem",
+          "marginBottom": "0.5rem"
+        },
+        "h6": {
+          "size": "0.875rem",
+          "weight": 500,
+          "lineHeight": 1.43,
+          "letterSpacing": "0.018em",
+          "marginBottom": "0.25rem"
+        }
+      },
+      "body": {
+        "size": "1rem",
+        "weight": 400,
+        "lineHeight": 1.5,
+        "color": "#444746"
+      },
+      "small": {
+        "size": "0.875rem",
+        "weight": 400,
+        "lineHeight": 1.43,
+        "color": "#5f6368"
+      },
+      "link": {
+        "color": "#1a73e8",
+        "hoverColor": "#0b57d0",
+        "textDecoration": "none"
+      }
+    },
+    "spacing": {
+      "baseUnit": "0.25rem",
+      "scale": [
+        {
+          "name": "none",
+          "value": "0rem"
+        },
+        {
+          "name": "xxs",
+          "value": "0.25rem"
+        },
+        {
+          "name": "xs",
+          "value": "0.5rem"
+        },
+        {
+          "name": "sm",
+          "value": "0.75rem"
+        },
+        {
+          "name": "md",
+          "value": "1rem"
+        },
+        {
+          "name": "lg",
+          "value": "1.5rem"
+        },
+        {
+          "name": "xl",
+          "value": "2rem"
+        },
+        {
+          "name": "xxl",
+          "value": "3rem"
+        },
+        {
+          "name": "xxxl",
+          "value": "4rem"
+        }
+      ],
+      "containerPadding": {
+        "mobile": "1rem",
+        "tablet": "2rem",
+        "desktop": "4rem"
+      },
+      "sectionGaps": {
+        "between": "4rem",
+        "within": "2rem"
+      }
+    },
+    "layout": {
+      "gridSystem": {
+        "columns": 12,
+        "gutter": "1.5rem",
+        "margin": "1.5rem",
+        "breakpoints": {
+          "mobile": "600px",
+          "tablet": "1024px",
+          "desktop": "1440px"
+        }
+      },
+      "maxWidths": {
+        "container": "80rem",
+        "text": "45rem",
+        "content": "75rem"
+      },
+      "zIndexLayers": [
+        {
+          "name": "base",
+          "value": 0
+        },
+        {
+          "name": "card-hover",
+          "value": 1
+        },
+        {
+          "name": "navigation",
+          "value": 100
+        },
+        {
+          "name": "header",
+          "value": 200
+        },
+        {
+          "name": "modal",
+          "value": 1000
+        }
+      ],
+      "positioningStrategy": "fixed"
+    },
+    "borders": {
+      "radius": {
+        "none": "0rem",
+        "sm": "0.5rem",
+        "md": "0.75rem",
+        "lg": "1rem",
+        "xl": "1.5rem",
+        "full": "6.25rem"
+      },
+      "widths": {
+        "thin": "1px",
+        "normal": "2px",
+        "thick": "3px"
+      },
+      "styles": [
+        "solid",
+        "none"
+      ]
+    },
+    "shadows": {
+      "sm": {
+        "value": "0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15)",
+        "usage": [
+          "md-elevated-button standard state"
+        ]
+      },
+      "md": {
+        "value": "0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15)",
+        "usage": [
+          "md-elevated-button hover state",
+          "ql-card hover state"
+        ]
+      },
+      "lg": {
+        "value": "0 2px 6px 2px rgba(60,64,67,0.15), 0 6px 10px 4px rgba(60,64,67,0.3)",
+        "usage": [
+          "Dropdown menus"
+        ]
+      },
+      "xl": {
+        "value": "0 4px 8px 3px rgba(60,64,67,0.15), 0 12px 16px 6px rgba(60,64,67,0.3)",
+        "usage": [
+          "Modal dialogs"
+        ]
+      },
+      "inner": {
+        "value": "none",
+        "usage": []
+      },
+      "glow": {
+        "value": "none",
+        "usage": []
+      }
+    },
+    "animation": {
+      "durations": {
+        "instant": "50ms",
+        "fast": "150ms",
+        "normal": "250ms",
+        "slow": "400ms",
+        "verySlow": "1000ms"
+      },
+      "easing": {
+        "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "enter": "cubic-bezier(0, 0, 0.2, 1)",
+        "exit": "cubic-bezier(0.4, 0, 1, 1)",
+        "spring": "cubic-bezier(0.2, 0, 0, 1)"
+      },
+      "transitions": [
+        {
+          "property": "background-color",
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        {
+          "property": "box-shadow",
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        {
+          "property": "transform",
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.2, 0, 0, 1)"
+        }
+      ]
+    },
+    "interactions": {
+      "hover": {
+        "scale": 1,
+        "opacity": 0.92,
+        "transition": "background-color 250ms, box-shadow 250ms"
+      },
+      "focus": {
+        "outlineWidth": "2px",
+        "outlineColor": "#0b57d0",
+        "offset": "2px"
+      },
+      "active": {
+        "scale": 0.98,
+        "opacity": 0.88
+      },
+      "loading": {
+        "spinnerType": "circular",
+        "skeletonColor": "#e0e0e0"
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Global Header",
+      "selector": "header.global-header",
+      "screenshot": "paths_hero_and_cards.png",
+      "styles": {
+        "container": {
+          "position": "fixed",
+          "top": "0",
+          "left": "0",
+          "width": "100%",
+          "height": "64px",
+          "backgroundColor": "#ffffff",
+          "borderBottom": "1px solid #e0e0e0",
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "space-between",
+          "padding": "0 1.5rem",
+          "zIndex": 200
+        },
+        "inner": {
+          "display": "flex",
+          "alignItems": "center",
+          "gap": "1rem"
+        },
+        "text": {
+          "fontSize": "1rem",
+          "fontWeight": 500,
+          "color": "#1f1f1f"
+        },
+        "images": {
+          "height": "24px"
+        }
+      },
+      "variants": [],
+      "breakpoints": {}
+    },
+    {
+      "name": "Collapsed Sidenav",
+      "selector": "nav.sidenav",
+      "screenshot": "paths_hero_and_cards.png",
+      "styles": {
+        "container": {
+          "position": "fixed",
+          "top": "64px",
+          "left": "0",
+          "width": "80px",
+          "height": "calc(100vh - 64px)",
+          "backgroundColor": "#ffffff",
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "padding": "1rem 0",
+          "zIndex": 100
+        },
+        "inner": {
+          "display": "flex",
+          "flexDirection": "column",
+          "alignItems": "center",
+          "gap": "1.5rem",
+          "width": "100%"
+        },
+        "text": {
+          "fontSize": "0.75rem",
+          "fontWeight": 500,
+          "color": "#444746",
+          "marginTop": "0.25rem"
+        },
+        "images": {
+          "width": "24px",
+          "height": "24px"
+        }
+      },
+      "variants": [
+        {
+          "name": "Active Item",
+          "styles": {
+            "backgroundColor": "#d3e3fd",
+            "borderRadius": "16px",
+            "color": "#0b57d0"
+          },
+          "behavior": "Displays a blue pill-shaped background wrapper around the active item icon."
+        }
+      ],
+      "breakpoints": {}
+    },
+    {
+      "name": "Filled Button",
+      "selector": "md-filled-button",
+      "screenshot": "paths_hero_and_cards.png",
+      "styles": {
+        "container": {
+          "display": "inline-flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "height": "40px",
+          "padding": "0 1.5rem",
+          "backgroundColor": "#0b57d0",
+          "borderRadius": "100px",
+          "border": "none",
+          "cursor": "pointer"
+        },
+        "inner": {},
+        "text": {
+          "color": "#ffffff",
+          "fontFamily": "Google Sans Text",
+          "fontSize": "0.875rem",
+          "fontWeight": 500
+        },
+        "images": {}
+      },
+      "variants": [
+        {
+          "name": "Hover",
+          "styles": {
+            "boxShadow": "0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15)",
+            "backgroundColor": "#0b57d0"
+          },
+          "behavior": "Adds box-shadow elevation and opacity hover layer."
+        }
+      ],
+      "breakpoints": {}
+    },
+    {
+      "name": "Outlined Button",
+      "selector": "md-outlined-button",
+      "screenshot": "gear_banner_and_credentials.png",
+      "styles": {
+        "container": {
+          "display": "inline-flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "height": "40px",
+          "padding": "0 1.5rem",
+          "backgroundColor": "transparent",
+          "border": "1px solid #747775",
+          "borderRadius": "100px",
+          "cursor": "pointer"
+        },
+        "inner": {},
+        "text": {
+          "color": "#0b57d0",
+          "fontFamily": "Google Sans Text",
+          "fontSize": "0.875rem",
+          "fontWeight": 500
+        },
+        "images": {}
+      },
+      "variants": [
+        {
+          "name": "Hover",
+          "styles": {
+            "backgroundColor": "rgba(11, 87, 208, 0.08)"
+          },
+          "behavior": "Fills button with transparent primary blue tint."
+        }
+      ],
+      "breakpoints": {}
+    },
+    {
+      "name": "Path Card",
+      "selector": "ql-card, .ql-card",
+      "screenshot": "paths_hero_and_cards.png",
+      "styles": {
+        "container": {
+          "backgroundColor": "#ffffff",
+          "borderRadius": "1.5rem",
+          "padding": "1.5rem",
+          "border": "none",
+          "boxShadow": "none",
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "1rem",
+          "transition": "transform 250ms cubic-bezier(0.2, 0, 0, 1), box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        "inner": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "0.5rem"
+        },
+        "text": {
+          "title": {
+            "fontSize": "1.375rem",
+            "fontWeight": 600,
+            "color": "#1f1f1f",
+            "fontFamily": "Google Sans"
+          },
+          "description": {
+            "fontSize": "0.875rem",
+            "color": "#444746",
+            "fontFamily": "Google Sans Text"
+          }
+        },
+        "images": {}
+      },
+      "variants": [
+        {
+          "name": "Hover",
+          "styles": {
+            "transform": "translateY(-4px)",
+            "boxShadow": "0 4px 12px 0 rgba(60, 64, 67, 0.12), 0 2px 4px 0 rgba(60, 64, 67, 0.08)"
+          },
+          "behavior": "Card lifts slightly up and receives a soft drop shadow."
+        }
+      ],
+      "breakpoints": {}
+    },
+    {
+      "name": "Vertical Credentials Switcher",
+      "selector": ".credentials-switcher",
+      "screenshot": "gear_banner_and_credentials.png",
+      "styles": {
+        "container": {
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "1.5rem"
+        },
+        "inner": {},
+        "text": {},
+        "images": {}
+      },
+      "variants": [
+        {
+          "name": "Active Item",
+          "styles": {
+            "borderLeft": "4px solid #0b57d0",
+            "paddingLeft": "1rem",
+            "fontWeight": 600
+          },
+          "behavior": "Active credential tab shows indicator bar on left and expanded text explanation below."
+        }
+      ],
+      "breakpoints": {}
+    }
+  ],
+  "patterns": {
+    "navigation": {
+      "type": "hybrid",
+      "behavior": "fixed",
+      "items": 7,
+      "mobileBehavior": "hamburger"
+    },
+    "cards": {
+      "count": 3,
+      "layout": "grid",
+      "hoverEffect": "lift",
+      "contentStructure": [
+        "image",
+        "title",
+        "description",
+        "cta"
+      ]
+    },
+    "forms": {
+      "inputStyle": "outlined",
+      "borderRadius": "1.5rem",
+      "validationStyle": "inline"
+    },
+    "modals": {
+      "triggerType": "click",
+      "animation": "scale",
+      "backdropBlur": true,
+      "closeBehavior": "click-outside"
+    }
+  },
+  "designPrinciples": {
+    "overallVibe": [
+      "Modern Material Design 3",
+      "Clean white spaces",
+      "Google branding elements with subtle color splashes",
+      "Highly accessible and legible contrast"
+    ],
+    "references": [
+      "m3.material.io"
+    ],
+    "uniqueElements": [
+      "Brand-colored words in hero heading (Shape your future self)",
+      "Pill-shaped category selectors with custom line illustrations",
+      "Material 3 web components (<md-filled-button>, <md-outlined-button>)"
+    ],
+    "accessibility": {
+      "contrastRatios": {
+        "minimum": 4.5,
+        "violations": []
+      },
+      "focusIndicators": true,
+      "ariaLabels": true
+    },
+    "performance": {
+      "imageOptimization": true,
+      "fontLoading": "swap",
+      "criticalCSS": "external"
+    }
+  }
+}
