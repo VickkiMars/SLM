@@ -47,157 +47,7 @@
     }
   </script>
 
-  <style>
-    /* Global Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(79, 70, 229, 0.15);
-      border-radius: 99px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(79, 70, 229, 0.35);
-    }
-
-    body {
-      font-family: 'Open Sans', system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background-color: #EEF2FF;
-      color: #312E81;
-    }
-
-    /* Editorial headings and reading prose */
-    h1, h2, h3, h4, h5, h6, .serif-text {
-      font-family: 'Poppins', sans-serif;
-    }
-
-    /* Token styling (Vibrant & Block-based Interactive) */
-    .token {
-      display: inline-block;
-      cursor: pointer;
-      position: relative;
-      padding: 0 2px;
-      margin: 0 0.5px;
-      border-bottom: 2px solid rgba(79, 70, 229, 0.25);
-      transition: all 0.15s ease-in-out;
-      color: inherit;
-      border-radius: 2px;
-    }
-    .token:hover {
-      background: rgba(79, 70, 229, 0.08);
-      border-bottom-color: #4F46E5;
-      transform: translateY(-1px);
-    }
-    .token.active {
-      background: rgba(22, 163, 74, 0.1);
-      border-bottom-color: #16A34A;
-      border-bottom-style: solid;
-      font-weight: 600;
-    }
-
-    .token-unknown {
-      display: inline-block;
-      padding: 0 0.5px;
-      color: inherit;
-      opacity: 0.9;
-      user-select: text;
-    }
-    .token-punct {
-      display: inline;
-      color: inherit;
-      opacity: 0.4;
-    }
-
-    /* Text Container Settings */
-    #output {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 1.1rem;
-      line-height: 1.85;
-      letter-spacing: 0.01em;
-      color: #312E81;
-    }
-    #output.cn {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.3rem;
-      line-height: 2.1;
-      letter-spacing: 0.03em;
-    }
-
-    /* Popup Dialog */
-    #popup {
-      position: absolute;
-      z-index: 9999;
-      min-width: 160px;
-      max-width: 300px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      background: #ffffff;
-      border: 2px solid #4F46E5;
-      box-shadow: 4px 4px 0px 0px rgba(79, 70, 229, 1);
-      text-align: left;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-      display: none;
-    }
-    #popup.visible {
-      opacity: 1;
-      transform: translateY(0);
-      display: block;
-    }
-    #popup .pron {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.8rem;
-      color: #16A34A;
-      font-style: normal;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-    #popup .meaning {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.9rem;
-      color: #312E81;
-      font-weight: 500;
-      line-height: 1.4;
-    }
-    #popup::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 50%;
-      transform: translateX(-50%) rotate(45deg);
-      width: 8px;
-      height: 8px;
-      background: #ffffff;
-      border-right: 2px solid #4F46E5;
-      border-bottom: 2px solid #4F46E5;
-    }
-    #popup.below::after {
-      bottom: auto;
-      top: -6px;
-      border-right: none;
-      border-bottom: none;
-      border-left: 2px solid #4F46E5;
-      border-top: 2px solid #4F46E5;
-    }
-
-    /* Custom Category Chips scroll hides scrollbar */
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="bg-slm-paper text-slm-ink min-h-screen flex flex-col font-body">
 
@@ -308,7 +158,7 @@
     </div>
   </nav>
 
-  <!-- Main Grid Workspace (Zen alignment, max 70ch text blocks) -->
+  <!-- Main Workspace -->
   <main class="ml-0 md:ml-20 mt-16 flex-1 px-6 sm:px-8 lg:px-12 py-10 max-w-6xl w-full md:w-[calc(100vw-80px)] mx-auto relative z-10">
     
     <!-- Hero Banner -->
@@ -375,11 +225,11 @@
       <option value="Other">Other</option>
     </select>
 
-    <!-- Content Workspace Panels -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Layout Panels Container (Centered Single View Toggling) -->
+    <div class="w-full flex justify-center items-start">
       
-      <!-- INPUT PANEL (Left, 5 cols) -->
-      <section class="lg:col-span-5 bg-slm-card rounded-3xl p-6 sm:p-7 border-2 border-slm-pine/60 shadow-block flex flex-col">
+      <!-- INPUT PANEL -->
+      <section id="inputPanel" class="w-full max-w-2xl bg-slm-card rounded-3xl p-6 sm:p-7 border-2 border-slm-pine/60 shadow-block flex flex-col">
         <div class="flex items-center justify-between mb-5">
           <h2 class="text-base font-bold font-serif tracking-tight flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-slm-pine">
@@ -433,21 +283,26 @@
         </div>
       </section>
 
-      <!-- OUTPUT PANEL (Right, 7 cols) -->
-      <section id="outputPanel" class="lg:col-span-7 bg-slm-card rounded-3xl p-6 sm:p-7 border-2 border-slm-pine/60 shadow-block flex flex-col min-h-[460px]">
-        <div class="flex items-center justify-between mb-5">
-          <h2 class="text-base font-bold font-serif tracking-tight flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-slm-clay">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-            </svg>
-            Reading View
-          </h2>
+      <!-- OUTPUT PANEL (Bigger, max-w-4xl) -->
+      <section id="outputPanel" class="w-full max-w-4xl bg-slm-card rounded-3xl p-6 sm:p-8 border-2 border-slm-pine/60 shadow-block flex flex-col min-h-[460px] hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-slm-border">
+          <div class="flex items-center gap-3">
+            <button id="editBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-slm-border text-[10px] font-bold text-slm-pine hover:bg-slm-pine/5 transition uppercase tracking-wider">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit Content
+            </button>
+            <h2 class="text-base font-bold font-serif tracking-tight flex items-center gap-2 text-slm-ink">
+              Reading View
+            </h2>
+          </div>
           <div id="outputStats" class="flex items-center gap-2"></div>
         </div>
 
-        <!-- Render Container (Playfair prose layout, limited to 70ch width) -->
-        <div id="output" class="flex-1 overflow-auto rounded-2xl bg-slm-paper/40 border border-slm-border p-6 sm:p-8 max-w-[70ch]">
+        <!-- Render Container (Centered, wide reading layout) -->
+        <div id="output" class="flex-1 overflow-auto rounded-2xl bg-slm-paper/40 border border-slm-border p-6 sm:p-8 w-full">
           <div class="flex flex-col items-center justify-center text-center py-20 text-slm-inkMuted">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-slm-pine opacity-40">
               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
@@ -489,379 +344,6 @@
     <div class="meaning"></div>
   </div>
 
-  <!-- Interactive Logic Script -->
-  <script>
-    (() => {
-      'use strict';
-
-      // ====== Elements ======
-      const $ = (id) => document.getElementById(id);
-      const textInput   = $('textInput');
-      const vocabInput  = $('vocabInput');
-      const languageSel = $('language');
-      const generateBtn = $('generateBtn');
-      const sampleBtn   = $('sampleBtn');
-      const output      = $('output');
-      const outputPanel = $('outputPanel');
-      const outputStats = $('outputStats');
-      const popup       = $('popup');
-      const popupPron   = popup.querySelector('.pron');
-      const popupMean   = popup.querySelector('.meaning');
-      const vocabSearch = $('vocabSearch');
-      const langChips   = document.querySelectorAll('.lang-chip');
-
-      // ====== State ======
-      let vocab = {};                // { word: { meaning, pronunciation } }
-      let lookupMap = {};            // for non-Chinese: lowercased key -> {original, meaning, pronunciation}
-      let sortedKeys = [];           // Chinese: keys sorted by length desc for longest-match
-      let activeTokenEl = null;
-      let currentLanguage = 'Chinese';
-
-      // ====== Language Selection Chips ======
-      langChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          // Deactivate all chips
-          langChips.forEach(c => {
-            c.classList.remove('bg-slm-pine', 'text-slm-paper', 'border-slm-pine');
-            c.classList.add('bg-transparent', 'text-slm-inkMuted', 'border-slm-border');
-          });
-          
-          // Activate clicked chip
-          chip.classList.add('bg-slm-pine', 'text-slm-paper', 'border-slm-pine');
-          chip.classList.remove('bg-transparent', 'text-slm-inkMuted', 'border-slm-border');
-          
-          const selectedLang = chip.getAttribute('data-lang-val');
-          languageSel.value = selectedLang;
-          currentLanguage = selectedLang;
-          
-          // Auto-load demo on language switch
-          loadDemoContent(selectedLang);
-        });
-      });
-
-      // ====== Vocab Parser ======
-      function parseVocab(raw) {
-        const v = {};
-        if (!raw) return v;
-        const lines = raw.split(/\r?\n/);
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          const parts = trimmed.split('::');
-          if (parts.length < 2) continue;
-          const word = (parts[0] || '').trim();
-          const meaning = (parts[1] || '').trim();
-          const pronunciation = (parts[2] || '').trim();
-          if (!word || !meaning) continue;
-          v[word] = { meaning, pronunciation };
-        }
-        return v;
-      }
-
-      function buildLookups(language) {
-        sortedKeys = Object.keys(vocab).sort((a,b) => b.length - a.length);
-        lookupMap = {};
-        if (language !== 'Chinese') {
-          for (const k of Object.keys(vocab)) {
-            lookupMap[k.toLowerCase()] = { original: k, ...vocab[k] };
-          }
-        }
-      }
-
-      // ====== Tokenizers ======
-      function tokenizeChinese(text) {
-        const tokens = [];
-        let i = 0;
-        while (i < text.length) {
-          const ch = text[i];
-
-          if (ch === '\n') { tokens.push({ type: 'newline' }); i++; continue; }
-
-          if (/\s/.test(ch)) {
-            let j = i;
-            while (j < text.length && /[ \t]/.test(text[j])) j++;
-            tokens.push({ type: 'space', text: text.slice(i, j) });
-            i = j; continue;
-          }
-
-          let matched = null;
-          for (const key of sortedKeys) {
-            if (!key.length) continue;
-            if (text.startsWith(key, i)) { matched = key; break; }
-          }
-          if (matched) {
-            tokens.push({ type: 'known', text: matched, data: vocab[matched] });
-            i += matched.length;
-            continue;
-          }
-
-          if (/[\u3000-\u303F\uFF00-\uFFEF.,!?;:'"()\[\]{}\-—…·、。，！？；：「」『』《》〈〉【】（）]/.test(ch)) {
-            tokens.push({ type: 'punct', text: ch });
-            i++; continue;
-          }
-
-          tokens.push({ type: 'unknown', text: ch });
-          i++;
-        }
-        return tokens;
-      }
-
-      function tokenizeLatin(text) {
-        const tokens = [];
-        const wordRe = /[\p{L}\p{M}\p{N}'-]/u;
-        let i = 0;
-        while (i < text.length) {
-          const ch = text[i];
-          if (ch === '\n') { tokens.push({ type: 'newline' }); i++; continue; }
-          if (/\s/.test(ch)) {
-            let j = i;
-            while (j < text.length && /[ \t]/.test(text[j])) j++;
-            tokens.push({ type: 'space', text: text.slice(i, j) });
-            i = j; continue;
-          }
-          if (wordRe.test(ch)) {
-            let j = i;
-            while (j < text.length && wordRe.test(text[j])) j++;
-            const w = text.slice(i, j);
-            const hit = lookupMap[w.toLowerCase()];
-            if (hit) {
-              tokens.push({ type: 'known', text: w, data: { meaning: hit.meaning, pronunciation: hit.pronunciation } });
-            } else {
-              tokens.push({ type: 'unknown', text: w });
-            }
-            i = j; continue;
-          }
-          tokens.push({ type: 'punct', text: ch });
-          i++;
-        }
-        return tokens;
-      }
-
-      // ====== Rendering ======
-      function escapeHtml(s) {
-        return s.replace(/[&<>"']/g, c => ({
-          '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-        }[c]));
-      }
-
-      // Rendering tokens
-      function renderTokens(tokens) {
-        const parts = [];
-        let knownCount = 0, unknownCount = 0;
-        for (const t of tokens) {
-          if (t.type === 'newline') { parts.push('<br>'); continue; }
-          if (t.type === 'space')   { parts.push(escapeHtml(t.text)); continue; }
-          if (t.type === 'punct')   { parts.push('<span class="token-punct">'+escapeHtml(t.text)+'</span>'); continue; }
-          if (t.type === 'unknown') {
-            unknownCount++;
-            parts.push('<span class="token-unknown">'+escapeHtml(t.text)+'</span>');
-            continue;
-          }
-          knownCount++;
-          const m = (t.data && t.data.meaning) || '';
-          const p = (t.data && t.data.pronunciation) || '';
-          parts.push(
-            '<span class="token" data-meaning="'+escapeHtml(m)+'" data-pron="'+escapeHtml(p)+'">'
-            + escapeHtml(t.text) +
-            '</span>'
-          );
-        }
-        return { html: parts.join(''), knownCount, unknownCount };
-      }
-
-      function renderStats(known, unknown) {
-        outputStats.innerHTML = `
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slm-pine/5 text-xs font-semibold text-slm-pine border border-slm-border">
-            ${known} words found
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slm-clay/5 text-xs font-semibold text-slm-clay border border-slm-border">
-            ${unknown} unmatched
-          </span>
-        `;
-      }
-
-       // ====== Popup logic ======
-      function showPopupFor(tokenEl) {
-        const meaning = tokenEl.getAttribute('data-meaning') || '';
-        const pron    = tokenEl.getAttribute('data-pron') || '';
-
-        popupPron.textContent = pron;
-        popupPron.style.display = pron ? 'block' : 'none';
-        popupMean.textContent = meaning;
-
-        popup.classList.add('visible');
-        popup.setAttribute('aria-hidden', 'false');
-
-        const rect = tokenEl.getBoundingClientRect();
-        const scrollX = window.scrollX || window.pageXOffset;
-        const scrollY = window.scrollY || window.pageYOffset;
-
-        const popupRect = popup.getBoundingClientRect();
-        const popupW = popupRect.width;
-        const popupH = popupRect.height;
-
-        let left = rect.left + scrollX + rect.width / 2 - popupW / 2;
-        let top  = rect.top + scrollY - popupH - 12;
-        let below = false;
-
-        const margin = 8;
-        if (top < scrollY + margin) {
-          top = rect.bottom + scrollY + 12;
-          below = true;
-        }
-        popup.classList.toggle('below', below);
-
-        const viewportLeft = scrollX + margin;
-        const viewportRight = scrollX + document.documentElement.clientWidth - margin;
-        if (left < viewportLeft) left = viewportLeft;
-        if (left + popupW > viewportRight) left = viewportRight - popupW;
-
-        popup.style.left = left + 'px';
-        popup.style.top  = top + 'px';
-
-        if (activeTokenEl && activeTokenEl !== tokenEl) activeTokenEl.classList.remove('active');
-        tokenEl.classList.add('active');
-        activeTokenEl = tokenEl;
-      }
-
-      function hidePopup() {
-        popup.classList.remove('visible', 'below');
-        popup.setAttribute('aria-hidden', 'true');
-        if (activeTokenEl) activeTokenEl.classList.remove('active');
-        activeTokenEl = null;
-      }
-
-      output.addEventListener('click', (e) => {
-        const tokenEl = e.target.closest('.token');
-        if (!tokenEl || !output.contains(tokenEl)) {
-          hidePopup();
-          return;
-        }
-        e.stopPropagation();
-        if (activeTokenEl === tokenEl) {
-          hidePopup();
-        } else {
-          showPopupFor(tokenEl);
-        }
-      });
-
-      // Vocabulary Search functionality (vibrant green highlights)
-      vocabSearch.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase().trim();
-        const tokens = output.querySelectorAll('.token');
-        
-        tokens.forEach(tok => {
-          const meaning = (tok.getAttribute('data-meaning') || '').toLowerCase();
-          const word = tok.textContent.toLowerCase();
-          const pinyin = (tok.getAttribute('data-pron') || '').toLowerCase();
-          
-          if (term && (meaning.includes(term) || word.includes(term) || pinyin.includes(term))) {
-            tok.style.backgroundColor = 'rgba(22, 163, 74, 0.12)';
-            tok.style.borderBottomColor = '#16a34a';
-            tok.style.borderBottomStyle = 'solid';
-          } else {
-            tok.style.backgroundColor = '';
-            tok.style.borderBottomColor = '';
-            tok.style.borderBottomStyle = '';
-          }
-        });
-      });
-
-      document.addEventListener('click', (e) => {
-        if (e.target.closest('.token')) return;
-        if (e.target.closest('#popup')) return;
-        hidePopup();
-      });
-
-      function repositionActive() {
-        if (activeTokenEl) showPopupFor(activeTokenEl);
-      }
-      document.addEventListener('scroll', () => { if (activeTokenEl) repositionActive(); }, { capture: true, passive: true });
-      window.addEventListener('resize', () => { if (activeTokenEl) repositionActive(); });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') hidePopup();
-      });
-
-      // ====== Generate Layout ======
-      function generate() {
-        hidePopup();
-        currentLanguage = languageSel.value;
-        vocab = parseVocab(vocabInput.value);
-        buildLookups(currentLanguage);
-
-        const text = textInput.value || '';
-        if (!text.trim()) {
-          output.innerHTML = `
-            <div class="flex flex-col items-center justify-center text-center py-16 text-slm-clay">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-3">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-              <p class="text-xs font-bold uppercase tracking-wider">Empty Input</p>
-              <p class="text-xs mt-1 opacity-75">Please write or paste a foreign text passage first.</p>
-            </div>`;
-          outputStats.innerHTML = '';
-          return;
-        }
-
-        const tokens = currentLanguage === 'Chinese'
-          ? tokenizeChinese(text)
-          : tokenizeLatin(text);
-
-        const { html, knownCount, unknownCount } = renderTokens(tokens);
-
-        output.classList.toggle('cn', currentLanguage === 'Chinese');
-        output.innerHTML = '<div>' + html + '</div>';
-        renderStats(knownCount, unknownCount);
-
-        // Scroll into view on small screens
-        if (window.matchMedia('(max-width: 1023px)').matches) {
-          setTimeout(() => {
-            outputPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 100);
-        }
-      }
-
-      generateBtn.addEventListener('click', generate);
-
-      // ====== Demo Data ======
-      const DEMOS = {
-        Chinese: {
-          text: `如果 那两个字 没有颤抖\n我不会发现 我难受\n怎么说出口 也不过是 分手\n如果对于明天没有要求\n牵牵手就像旅游\n成千上万个门口 总有一个人要先走\n\n怀抱既然不能逗留\n何不在离开的时候 一边享受 一边泪流\n十年之前 我不认识你 你不属于我\n我们还是一样 陪在一个陌生人左右\n走过渐渐熟悉的街头`,
-          vocab: `如果::if::rúguǒ\n那::that::nà\n两个::two::liǎnggè\n字::word; character::zì\n没有::not have::méiyǒu\n颤抖::tremble; shiver::chàndǒu\n我::I; me::wǒ\n不会::will not::búhuì\n发现::discover; realize::fāxiàn\n难受::feel bad; suffer::nánshòu\n怎么::how::zěnme\n说出口::say out loud::shuōchūkǒu\n也::also::yě\n不过::merely; just::búguò\n是::is; be::shì\n分手::break up::fēnshǒu\n对于::regarding; for::duìyú\n明天::tomorrow::míngtiān\n要求::demand; requirement::yāoqiú\n牵牵手::hold hands::qiānqiānshǒu\n就::just; then::jiù\n像::like; resemble::xiàng\n旅游::travel; tour::lǚyóu\n成千上万::tens of thousands::chéngqiānshàngwàn\n门口::doorway; entrance::ménkǒu\n总有::there is always::zǒngyǒu\n一个::one::yígè\n人::person::rén\n要::will; need to::yào\n先走::leave first::xiānzǒu\n怀抱::embrace; arms::huáibào\n既然::since; now that::jìrán\n不能::cannot::bùnéng\n逗留::linger; stay::dòuliú\n何不::why not::hébù\n在::at; in::zài\n离开::leave; depart::líkāi\n的::particle::de\n时候::time; moment::shíhòu\n一边::on one side; while::yìbiān\n享受::enjoy::xiǎngshòu\n泪流::tears flow::lèiliú\n十年::ten years::shínián\n之前::before::zhīqián\n不::not::bù\n认识::know (someone)::rènshi\n你::you::nǐ\n属于::belong to::shǔyú\n我们::we; us::wǒmen\n还::still::hái\n一样::the same::yíyàng\n陪::accompany::péi\n左右::left and right; around::zuǒyòu\n走过::walk past::zǒuguò\n渐渐::gradually::jiànjiàn\n熟悉::familiar::shúxī\n街头::street corner::jiētóu`
-        },
-        French: {
-          text: `Bonjour, je suis très heureux de te voir aujourd'hui. La vie est belle et le soleil brille fort. Nous allons marcher dans le parc et parler de tout.`,
-          vocab: `bonjour::hello::\nje::I::\nsuis::am::\ntrès::very::\nheureux::happy::\nde::of::\nte::you::\nvoir::to see::\naujourd'hui::today::\nla::the::\nvie::life::\nest::is::\nbelle::beautiful::\net::and::\nle::the::\ soleil::sun::\nbrille::shines::\nfort::strong; brightly::\nnous::we::\nallons::will go::\nmarcher::to walk::\ndans::in::\nparc::park::\nparler::to talk::\ntout::everything::`
-        },
-        Spanish: {
-          text: `Hola, me llamo Carlos y vivo en Madrid. Hoy hace mucho sol y voy a caminar por el parque con mi perro.`,
-          vocab: `hola::hello::\nme::myself; me::\nllamo::am called::\ny::and::\nvivo::I live::\nen::in::\nhoy::today::\nhace::makes; it is (weather)::\nmucho::much; a lot::\nsol::sun::\nvoy::I go::\na::to::\ncarminar::to walk::\npor::through; by::\nel::the::\nparque::park::\ncon::with::\nmi::my::\nperro::dog::`
-        },
-        Other: {
-          text: `The quick brown fox jumps over the lazy dog. Reading is an interactive journey that builds vocabulary.`,
-          vocab: `quick::fast; rapid::\nbrown::dark color::\nfox::wild animal::\njumps::leaps over::\nlazy::sluggish; slow::\ndog::canine pet::\ninteractive::engaging two-way communication::\njourney::trip; path::\nvocabulary::words of a language::`
-        }
-      };
-
-      function loadDemoContent(lang) {
-        const demo = DEMOS[lang] || DEMOS.Chinese;
-        textInput.value = demo.text;
-        vocabInput.value = demo.vocab;
-        generate();
-      }
-
-      sampleBtn.addEventListener('click', () => {
-        loadDemoContent(currentLanguage);
-      });
-
-      // ====== Initial load ======
-      // Preload Chinese demo values on startup for instant engagement
-      loadDemoContent('Chinese');
-
-    })();
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
