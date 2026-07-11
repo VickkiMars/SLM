@@ -16,4 +16,4 @@ def get_text_by_jobid(job_id, user_id):
         else:
           yeild {"status": "Not authorized!"}
   except Exception as e:
-    print(e)
+    print(e) 

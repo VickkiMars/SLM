@@ -1,14 +1,16 @@
 import openai
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 with open("data/prompt.txt", "r") as f:
   prompt = f.write()
-with open("data/format.json", "r") as f:
-  format = json.load(f)
 
 client = openai.OpenAI(
     base_url = 'https://api.fikraapi.co.ke/v1',
-    api_key = 
+    api_key = os.getenv("FIKRA_APIKEY")
 )
 
 async def translate_text(blob):
@@ -16,7 +18,7 @@ async def translate_text(blob):
       model="fikra-pro-120b",
       messages=[{
           "role": "system",
-          "content": f"{prompt}. OUTPUT ONLY THE JSON FORMAT GIVEN: {format}"
+          "content": f"{prompt}"
       },
       {
           "role": "user",
