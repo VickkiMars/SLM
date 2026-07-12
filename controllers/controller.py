@@ -10,7 +10,8 @@ async def router(blob, file_type, user_id):
       data = {
         "content": res,
         "original_language": blob["original_language"],
-        "target_language": blob["target_language"]
+        "target_language": blob["target_language"],
+        "original_iso639-1_code" : blob['original_iso639-1_code'],
       }
       result = await enqueue(blob=data, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": "True" }
