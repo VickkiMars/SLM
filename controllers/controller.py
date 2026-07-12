@@ -6,7 +6,7 @@ async def router(blob, file_type, user_id, name):
     if not blob or not file_type or not user_id:
       return {"message": "Field not nullable", "success": "False"}
     if file_type.startswith("image/"):
-      res = await extract_text(blob=blob["file_bytes"], name=name)
+      res = await extract_text(blob=blob["file_bytes"],  name=name, ios= blob['original_iso639-1_code'])
       data = {
         "content": res,
         "original_language": blob["original_language"],
