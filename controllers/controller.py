@@ -7,10 +7,15 @@ async def router(blob, file_type, user_id):
       return {"message": "Field not nullable", "success": "False"}
     if file_type.startswith("image/"):
       res = await extract_text(blob["file_bytes"])
-      result = await enqueue(blob=res, user_id=user_id)
+      data = {
+        "content": res,
+        "original_language": blob["original_language"],
+        "target_language": blob["target_language"]
+      }
+      result = await enqueue(blob=data, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": "True" }
     if file_type === "text":
-      result = await enqueue(blob=res, user_id=user_id)
+      result = await enqueue(blob=blob, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": "True"}
     else:
       return {"message": "File type not supported"}
