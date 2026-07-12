@@ -27,3 +27,4 @@ async def translate_text(blob):
       ]
   )
   result = response.choices[0].message.content
+  return result
