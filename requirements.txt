@@ -9,3 +9,4 @@ python-dotenv==1.0.1
 gunicorn==23.0.0
 pyjwt==2.9.0
 requests==2.32.3
+uvicorn==0.30.6
