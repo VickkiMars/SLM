@@ -1,8 +1,9 @@
 from controllers.controller import router
 from middleware.auth import verify_token
 from services.get_text import get_text_by_jobid
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Header
 from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
@@ -16,15 +17,32 @@ app.add_middleware(
 
 
 @app.post("/upload/translate")
-async def upload_file(file: UploadFile = File(...), request:Request):
+async def upload_file(file: UploadFile = File(...), request:Request, authorisation: str = Header(None)):
   try:
-    token = request.body()
-    user_id = await verify_token(token)
+    if not authorisation:
+      raise HTTPException(
+        status_code=401,
+        detail="Not Authorised"
+      )
+      return{"Not Authorised"}
+    user_id = await verify_token(authorisation)
+    if not user_id:
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid credentials"
+      )
+      return {"Invalid credentials"}
     #ratelimit
+    body = await request.json()
     file_type = file.content_type
     file_size = file.size
-    blob = file.file
-    res = router(blob=blob, user_id=user_id, file_type=file_type) 
+    blob = {
+      "original_lang" : body.get('original_language'),
+      "target_lang" : body.get('target_language'),
+      "original_iso639-1_code" : body.get('original_iso639-1_code'),
+      "file_bytes" : file.file
+    }
+    res = await router(blob=blob, user_id=user_id, file_type=file_type) 
     if res[success] == "True":
       raise HTTPException(
         status_code=200,
@@ -42,15 +60,30 @@ async def upload_file(file: UploadFile = File(...), request:Request):
   
 
 @app.post("/text/translate")
-async def send_text(request:Request):
+async def send_text(request:Request, authorisation: str = Header(None)):
   try:
-    token = request.body()
-    user_id = await verify_token(token)
+    if not authorisation:
+      raise HTTPException(
+        status_code=401,
+        detail="Not Authorised"
+      )
+      return {"Not Authorised"}
+    user_id = await verify_token(authorisation)
+    if not user_id:
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid credentials"
+      )
+      return {"Invalid credentials"}
     #rate limit
-    blob = request.body()
+    body = await request.json()
     file_type = "text"
-    user_id = user_id
-    res = router(blob=blob, user_id=user_id, file_type=file_type) 
+    blob = {
+      "original_lang" : body.get('original_language'),
+      "target_lang" : body.get('target_language'),
+      "content": body.get('comtent')
+    }
+    res = await router(blob=blob, user_id=user_id, file_type=file_type) 
       if res[success] == "True":
         raise HTTPException(
           status_code=200,
@@ -68,9 +101,21 @@ async def send_text(request:Request):
     
     
 @app.get("/status/{job_id}")
-async def send_text(job_id: str, request:Request):
+async def send_text(job_id: str, authorisation: str = Header(None)):
   try:
-    user_id = request.body()
+    if not authorisation:
+      raise HTTPException(
+        status_code=401,
+        detail="Not Authorised"
+      )
+      return {""Not Authorised}
+    user_id = await verify_token(authorisation)
+    if not user_id:
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid credentials"
+      )
+      return {"Invalid credentials"}
     res = get_text_by_jobid(job_id=job_id, user_id=user_id)
     yeild res
 
