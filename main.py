@@ -37,8 +37,8 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
     file_type = file.content_type
     file_size = file.size
     blob = {
-      "original_lang" : body.get('original_language'),
-      "target_lang" : body.get('target_language'),
+      "original_language" : body.get('original_language'),
+      "target_language" : body.get('target_language'),
       "original_iso639-1_code" : body.get('original_iso639-1_code'),
       "file_bytes" : file.file
     }
@@ -79,8 +79,8 @@ async def send_text(request:Request, authorisation: str = Header(None)):
     body = await request.json()
     file_type = "text"
     blob = {
-      "original_lang" : body.get('original_language'),
-      "target_lang" : body.get('target_language'),
+      "original_language" : body.get('original_language'),
+      "target_language" : body.get('target_language'),
       "content": body.get('comtent')
     }
     res = await router(blob=blob, user_id=user_id, file_type=file_type) 
