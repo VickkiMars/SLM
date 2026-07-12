@@ -1,4 +1,5 @@
 from controllers.controller import router
+from middleware.auth import verify_token
 from services.get_text import get_text_by_jobid
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 
@@ -7,8 +8,9 @@ app = FastAPI()
 @app.post("/upload/translate")
 async def upload_file(file: UploadFile = File(...), request:Request):
   try:
-    user_id = request.body()
-    #rate limit
+    token = request.body()
+    user_id = await verify_token(token)
+    #ratelimit
     file_type = file.content_type
     file_size = file.size
     blob = file.file
@@ -22,7 +24,7 @@ async def upload_file(file: UploadFile = File(...), request:Request):
     else:
       raise HTTPException(
         status_code=400,
-        detail="success"
+        detail="failed"
       )
       return res
   except Exception as e:
@@ -32,7 +34,8 @@ async def upload_file(file: UploadFile = File(...), request:Request):
 @app.post("/text/translate")
 async def send_text(request:Request):
   try:
-    user_id = request.body()
+    token = request.body()
+    user_id = await verify_token(token)
     #rate limit
     blob = request.body()
     file_type = "text"
@@ -47,7 +50,7 @@ async def send_text(request:Request):
       else:
         raise HTTPException(
           status_code=400,
-          detail="success"
+          detail="failed"
         )
         return res
   except Eception as e:
