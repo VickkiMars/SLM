@@ -1,12 +1,12 @@
 from services.extract import extract_text
 from services.queuing import enqueue_job
 
-async def router(blob, file_type, user_id):
+async def router(blob, file_type, user_id, name):
   try:
     if not blob or not file_type or not user_id:
       return {"message": "Field not nullable", "success": "False"}
     if file_type.startswith("image/"):
-      res = await extract_text(blob["file_bytes"])
+      res = await extract_text(blob=blob["file_bytes"], name=name)
       data = {
         "content": res,
         "original_language": blob["original_language"],
