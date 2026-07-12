@@ -6,7 +6,7 @@ async def router(blob, file_type, user_id):
     if not blob or not file_type or not user_id:
       return {"message": "Field not nullable", "success": "False"}
     if file_type.startswith("image/"):
-      res = await extract_text(blob)
+      res = await extract_text(blob["file_bytes"])
       result = await enqueue(blob=res, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": "True" }
     if file_type === "text":
