@@ -43,7 +43,7 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
       "original_iso639-1_code" : body.get('original_iso639-1_code'),
       "file_bytes" : file.file
     }
-    res = await router(blob=blob, user_id=user_id, file_type=file_type) 
+    res = await router(blob=blob, user_id=user_id, file_type=file_type, name=file_name) 
     if res[success] == "True":
       raise HTTPException(
         status_code=200,
@@ -84,7 +84,7 @@ async def send_text(request:Request, authorisation: str = Header(None)):
       "target_language" : body.get('target_language'),
       "content": body.get('comtent')
     }
-    res = await router(blob=blob, user_id=user_id, file_type=file_type) 
+    res = await router(blob=blob, user_id=user_id, file_type=file_type, name="") 
       if res[success] == "True":
         raise HTTPException(
           status_code=200,
