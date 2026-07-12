@@ -35,6 +35,7 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
     #ratelimit
     body = await request.json()
     file_type = file.content_type
+    file_name = file.file_name
     file_size = file.size
     blob = {
       "original_language" : body.get('original_language'),
