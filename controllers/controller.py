@@ -12,10 +12,10 @@ async def router(blob, file_type, user_id, name):
         "original_language": blob["original_language"],
         "target_language": blob["target_language"]
       }
-      result = await enqueue(blob=data, user_id=user_id)
+      result = await enqueue_job(blob=data, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": True }
-    if file_type === "text":
-      result = await enqueue(blob=blob, user_id=user_id)
+    if file_type == "text":
+      result = await enqueue_job(blob=blob, user_id=user_id)
       return {"message": "Upload queue for processing", "job_id": result, "success": True}
     else:
       return {"message": "File type not supported"}
