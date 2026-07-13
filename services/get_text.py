@@ -14,6 +14,7 @@ async def get_text_by_jobid(job_id, user_id):
         blob = json.loads(data)
         if blob['user_id'] === user_id:
           yield blob
+          r.expire(key, 2)
         else:
           yield {"status": "Not authorized!"}
   except Exception as e:
