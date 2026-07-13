@@ -28,13 +28,13 @@ async def upload_file(request:Request,file: UploadFile = File(...),  authorisati
         detail="Not Authorised"
       )
       return{"Not Authorised"}
-    user_id = await verify_token(authorisation)
-    if not user_id:
+    data = await verify_token(authorisation)
+    if not data:
       raise HTTPException(
         status_code=401,
         detail="Invalid credentials"
       )
-      return {"Invalid credentials"}
+    user_id = data["user_id"]
     #ratelimit
     body = await request.form()
     file_type = file.content_type
@@ -51,9 +51,8 @@ async def upload_file(request:Request,file: UploadFile = File(...),  authorisati
     else:
       raise HTTPException(
         status_code=400,
-        detail="failed"
+        detail=res
       )
-      return res
   except HTTPException:
     raise 
  
@@ -74,13 +73,13 @@ async def send_text(request:Request, authorisation: str = Header(None)):
         detail="Not Authorised"
       )
       return {"Not Authorised"}
-    user_id = await verify_token(authorisation)
-    if not user_id:
+    data = await verify_token(authorisation)
+    if not data:
       raise HTTPException(
         status_code=401,
         detail="Invalid credentials"
       )
-      return {"Invalid credentials"}
+    user_id = data["user_id"]
     #rate limit
     body = await request.json()
     file_type = "text"
@@ -116,12 +115,13 @@ async def send_text(job_id: str, authorisation: str = Header(None)):
         status_code=401,
         detail="Not Authorised"
       )
-    user_id = await verify_token(authorisation)
-    if not user_id:
+    data = await verify_token(authorisation)
+    if not data:
       raise HTTPException(
         status_code=401,
         detail="Invalid credentials"
       )
+    user_id = data["user_id"]
     return StreamingResponse(get_text_by_jobid(job_id=job_id, user_id=user_id), media_type= "text/event-stream")
 
   except HTTPException:
@@ -134,5 +134,28 @@ async def send_text(job_id: str, authorisation: str = Header(None)):
         detail="failed"
       )  
   
+
+
+
+@app.get("/api/user/getdetails")
+async def send_text(authorisation: str = Header(None)):
+  try:
+    if not authorisation:
+      raise HTTPException(
+        status_code=401,
+        detail="Not Authorised"
+      )
+    data = await verify_token(authorisation)
+    if not data:
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid credentials"
+      )
+    details = {
+      "user_id" = data["user_id"],
+      "user_name" = data["user_name"],
+      "user_email = data["user_email"]
+    }
+    return details
   
 
