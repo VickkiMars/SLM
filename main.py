@@ -27,7 +27,6 @@ async def upload_file(request:Request,file: UploadFile = File(...),  authorisati
         status_code=401,
         detail="Not Authorised"
       )
-      return{"Not Authorised"}
     data = await verify_token(authorisation)
     if not data:
       raise HTTPException(
@@ -46,7 +45,7 @@ async def upload_file(request:Request,file: UploadFile = File(...),  authorisati
       "file_bytes" : file.file
     }
     res = await router(blob=blob, user_id=user_id, file_type=file_type, name=file_name) 
-    if res['success'] == "True":
+    if res['success']:
       return res
     else:
       raise HTTPException(
