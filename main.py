@@ -3,9 +3,12 @@ from middleware.auth import verify_token
 from services.get_text import get_text_by_jobid
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+import logging 
 
 
 app = FastAPI()
+logger = logging.getLogger("uvicorn.error")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,8 +19,8 @@ app.add_middleware(
 )
 
 
-@app.post("/upload/translate")
-async def upload_file(file: UploadFile = File(...), request:Request, authorisation: str = Header(None)):
+@app.post("/api/upload/translate")
+async def upload_file(request:Request,file: UploadFile = File(...),  authorisation: str = Header(None)):
   try:
     if not authorisation:
       raise HTTPException(
@@ -33,10 +36,9 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
       )
       return {"Invalid credentials"}
     #ratelimit
-    body = await request.json()
+    body = await request.form()
     file_type = file.content_type
-    file_name = file.file_name
-    file_size = file.size
+    file_name = file.filename
     blob = {
       "original_language" : body.get('original_language'),
       "target_language" : body.get('target_language'),
@@ -44,11 +46,7 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
       "file_bytes" : file.file
     }
     res = await router(blob=blob, user_id=user_id, file_type=file_type, name=file_name) 
-    if res[success] == "True":
-      raise HTTPException(
-        status_code=200,
-        detail="success"
-      )
+    if res['success'] == "True":
       return res
     else:
       raise HTTPException(
@@ -56,11 +54,18 @@ async def upload_file(file: UploadFile = File(...), request:Request, authorisati
         detail="failed"
       )
       return res
+  except HTTPException:
+    raise 
+ 
   except Exception as e:
-    print(e)
+    logger.exception(f"Unexpected error: {e}")
+    raise HTTPException(
+        status_code=400,
+        detail="failed"
+      )  
   
 
-@app.post("/text/translate")
+@app.post("/api/text/translate")
 async def send_text(request:Request, authorisation: str = Header(None)):
   try:
     if not authorisation:
@@ -82,26 +87,28 @@ async def send_text(request:Request, authorisation: str = Header(None)):
     blob = {
       "original_language" : body.get('original_language'),
       "target_language" : body.get('target_language'),
-      "content": body.get('comtent')
+      "content": body.get('content')
     }
     res = await router(blob=blob, user_id=user_id, file_type=file_type, name="") 
-      if res[success] == "True":
-        raise HTTPException(
-          status_code=200,
-          detail="success"
-        )
-        return res
-      else:
-        raise HTTPException(
-          status_code=400,
-          detail="failed"
-        )
-        return res
-  except Eception as e:
-    print(e)  
+    if res['success'] == "True":
+      return res
+    else:
+      raise HTTPException(
+        status_code=400,
+         detail=res
+      )
+  except HTTPException:
+    raise
+  
+  except Exception as e:
+    logger.exception(f"Unexpected error: {e}") 
+    raise HTTPException(
+        status_code=400,
+        detail="failed"
+      )  
     
     
-@app.get("/status/{job_id}")
+@app.get("/api/status/{job_id}")
 async def send_text(job_id: str, authorisation: str = Header(None)):
   try:
     if not authorisation:
@@ -109,19 +116,23 @@ async def send_text(job_id: str, authorisation: str = Header(None)):
         status_code=401,
         detail="Not Authorised"
       )
-      return {""Not Authorised}
     user_id = await verify_token(authorisation)
     if not user_id:
       raise HTTPException(
         status_code=401,
         detail="Invalid credentials"
       )
-      return {"Invalid credentials"}
-    res = get_text_by_jobid(job_id=job_id, user_id=user_id)
-    yeild res
+    return StreamingResponse(get_text_by_jobid(job_id=job_id, user_id=user_id), media_type= "text/event-stream")
 
-  except Eception as e:
-    print(e)  
+  except HTTPException:
+    raise
+ 
+  except Exception as e:
+    logger.exception(f"Unexpected error: {e}")
+    raise HTTPException(
+        status_code=400,
+        detail="failed"
+      )  
   
   
 
