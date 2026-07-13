@@ -87,7 +87,7 @@ async def send_text(request:Request, authorisation: str = Header(None)):
       "target_language" : body.get('target_language'),
       "content": body.get('content')
     }
-    res = await router(blob=blob, user_id=user_id, file_type=file_type, name="") 
+    res = await router(blob=blob, user_id=user_id, file_type=file_type, name="name") 
     if res['success'] == "True":
       return res
     else:
