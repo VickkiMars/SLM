@@ -11,9 +11,9 @@ OUTPUT SCHEMA:
  "error": ""
 	"words": [
 		{
-			"source_word": "string",
-		    "translated_word": "string",
-		    "pronunciation": "string",
+	   "source_word": "string",
+		  "translated_word": "string",
+		  "pronunciation": "string"
 		}
 	]
 }
