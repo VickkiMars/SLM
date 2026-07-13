@@ -152,9 +152,9 @@ async def send_text(authorisation: str = Header(None)):
         detail="Invalid credentials"
       )
     details = {
-      "user_id" = data["user_id"],
-      "user_name" = data["user_name"],
-      "user_email" = data["user_email"]
+      "user_id" : data["user_id"],
+      "user_name" : data["user_name"],
+      "user_email" : data["user_email"]
     }
     return details
   
