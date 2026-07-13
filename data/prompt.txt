@@ -8,6 +8,7 @@ OUTPUT SCHEMA:
 	"source_language": "string",
 	"target_language": "string",
 	"full_translation": "string",
+ "error": ""
 	"words": [
 		{
 			"source_word": "string",
