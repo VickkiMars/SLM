@@ -157,5 +157,16 @@ async def send_text(authorisation: str = Header(None)):
       "user_email" : data["user_email"]
     }
     return details
+
+  except HTTPException:
+    raise
+ 
+  except Exception as e:
+    logger.exception(f"Unexpected error: {e}")
+    raise HTTPException(
+        status_code=400,
+        detail="failed"
+      )  
+  
   
 
