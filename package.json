@@ -1,0 +1,18 @@
+{
+  "name": "slm-backend",
+  "version": "1.0.0",
+  "description": "SLM Node.js backend service",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.71.1"
+  }
+}
