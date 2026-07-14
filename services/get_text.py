@@ -1,4 +1,4 @@
-from utils.redis.py import r 
+from utils.redis import r 
 import asyncio
 import json
 
@@ -12,7 +12,7 @@ async def get_text_by_jobid(job_id, user_id):
         asyncio.sleep(2)
       else:
         blob = json.loads(data)
-        if blob['user_id'] === user_id:
+        if blob['user_id'] == user_id:
           yield blob
           r.expire(key, 2)
         else:

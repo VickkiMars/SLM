@@ -1,11 +1,12 @@
-from utils.redis.py import r 
+from utils.redis import r 
 import json
 import uuid
 from services.translate import translate_text
 import time
+import asyncio
 
 
-def enqueue_job(user_id, blob):
+async def enqueue_job(user_id, blob):
   try:
     id = str(uuid.uuid4())
     job = {
@@ -19,16 +20,17 @@ def enqueue_job(user_id, blob):
   except Exception as e:
     print(e)
   
-def worker_loop():
+async def worker_loop():
   while True:
-    _, raw_job = r.brpop("translation_queue")
-    job = json.loads(raw_job)
-    model_output = await translate_text(job['document'])
-    r.set(f"result:{job['job_id']}", json.dumps({
-        "user_id": job['user_id'],
-        "output": model_output,
-        "status": "complete",
-        "created_at": time.time()
-    }))
-    
-worker_loop()
+    raw_job = r.rpop("translation_queue")
+    if raw_job:
+      job = json.loads(raw_job)
+      model_output = await translate_text(job['document'])
+      r.set(f"result:{job['job_id']}", json.dumps({
+          "user_id": job['user_id'],
+          "output": model_output,
+          "status": "complete",
+          "created_at": time.time()
+      }))
+    else:
+      await asyncio.sleep(1)

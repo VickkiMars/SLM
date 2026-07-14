@@ -4,11 +4,16 @@ from services.get_text import get_text_by_jobid
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-import logging 
+from contextlib import asynccontextmanager
+from services.queuing import worker_loop
+import logging
+import asyncio
+import uvicorn
 
 
 app = FastAPI()
 logger = logging.getLogger("uvicorn.error")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +22,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+  worker_task = asyncio.create_task(worker_loop())
+  yield
+  worker_task.cancel()
+  try:
+    await worker_task
+  except asyncio.CancelledError:
+    pass
+app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/api/upload/translate")
@@ -178,4 +194,10 @@ async def send_text(authorisation: str = Header(None)):
       )  
   
   
-
+if __name__ == "__main__":
+  uvicorn.run(
+    "main:app",
+    host="0.0.0.0",
+    port=8080,
+    reload=True
+  )
