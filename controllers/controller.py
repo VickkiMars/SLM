@@ -1,4 +1,4 @@
-from services.extract import extract_text
+from services.extract_text import extract_text
 from services.queuing import enqueue_job
 
 async def router(blob, file_type, user_id, name):

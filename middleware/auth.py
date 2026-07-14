@@ -49,4 +49,6 @@ async def rate_limit(id):
   else:
     tokens = tokens - 1
     left_tokens = left_tokens - 1
+    r.hset(key, mapping= {"tokens":tokens, "last_refill":now, "left_tokens":left_tokens})
+    r.expire(key, 86400)
     return True
