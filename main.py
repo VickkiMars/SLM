@@ -1,5 +1,5 @@
 from controllers.controller import router
-from middleware.auth import verify_token
+from middleware.auth import rate_limit, verify_token
 from services.get_text import get_text_by_jobid
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,7 +20,7 @@ app.add_middleware(
 
 
 @app.post("/api/upload/translate")
-async def upload_file(request:Request,file: UploadFile = File(...),  authorisation: str = Header(None)):
+async def upload_file(request:Request, file: UploadFile = File(...),  authorisation: str = Header(None)):
   try:
     if not authorisation:
       raise HTTPException(
@@ -34,7 +34,12 @@ async def upload_file(request:Request,file: UploadFile = File(...),  authorisati
         detail="Invalid credentials"
       )
     user_id = data["user_id"]
-    #ratelimit
+    is_allowed = await rate_limit(user_id)
+    if not is_allowed:
+      raise HTTPException(
+        status_code=429,
+        detail="Too many request"
+      )
     body = await request.form()
     file_type = file.content_type
     file_name = file.filename
@@ -79,7 +84,12 @@ async def send_text(request:Request, authorisation: str = Header(None)):
         detail="Invalid credentials"
       )
     user_id = data["user_id"]
-    #rate limit
+    is_allowed = await rate_limit(user_id)
+    if not is_allowed:
+      raise HTTPException(
+        status_code=429,
+        detail="Too many request"
+      )
     body = await request.json()
     file_type = "text"
     blob = {
@@ -103,7 +113,7 @@ async def send_text(request:Request, authorisation: str = Header(None)):
     raise HTTPException(
         status_code=400,
         detail="failed"
-      )  
+      )
     
     
 @app.get("/api/status/{job_id}")
