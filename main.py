@@ -8,7 +8,6 @@ from contextlib import asynccontextmanager
 from services.queuing import worker_loop
 import logging
 import asyncio
-import uvicorn
 
 
 app = FastAPI()
@@ -191,13 +190,4 @@ async def send_text(authorisation: str = Header(None)):
     raise HTTPException(
         status_code=400,
         detail="failed"
-      )  
-  
-  
-if __name__ == "__main__":
-  uvicorn.run(
-    "main:app",
-    host="0.0.0.0",
-    port=8080,
-    reload=True
-  )
+      )
