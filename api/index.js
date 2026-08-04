@@ -112,22 +112,10 @@ app.post('/api/upload/translate', upload.single('file'), async (req, res) => {
 
     let content = "";
     if (fileType.startsWith("image/")) {
-      const formData = new FormData();
-      const blob = new Blob([req.file.buffer], { type: fileType });
-      formData.append('file', blob, fileName);
-      formData.append('apikey', process.env.OCR_KEY || '');
-      formData.append('language', originalIso || 'eng');
-
-      const ocrRes = await fetch('https://api.ocr.space/parse/image', {
-        method: 'POST',
-        body: formData
+      return res.status(400).json({
+        error: 'IMAGE_OCR_DISABLED',
+        detail: 'Image OCR processing is disabled. Please upload a plain text (.txt) file or paste your text directly.'
       });
-      const ocrJson = await ocrRes.json();
-      if (ocrJson.ParsedResults && ocrJson.ParsedResults[0]) {
-        content = ocrJson.ParsedResults[0].ParsedText;
-      } else {
-        throw new Error("OCR_EXTRACTION_FAILED: The OCR service could not extract text from the uploaded image.");
-      }
     } else {
       content = req.file.buffer.toString('utf8');
     }
