@@ -15,6 +15,7 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
     ┌───────────────┴───────────────┐┌───────────────┴───────────────┐
     │     ESSENTIAL PLATFORM        ││    DISCOVERY & ENGAGEMENT     │
     │  History · Stats · SRS Quiz   ││  Daily Poem · Story · Audio   │
+    │   Lex-Elo Rating Engine       ││                               │
     └───────────────┬───────────────┘└───────────────┬───────────────┘
                     │                                │
     ┌───────────────┴───────────────┐┌───────────────┴───────────────┐
@@ -88,18 +89,132 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 
 ---
 
-### 1.5 Lex-Elo Adaptive Language Rating System
-* **Category**: Essential / Algorithmic Core (See full spec in `LEX_ELO_SYSTEM.md`)
+### 1.5 Lex-Elo Adaptive Language Rating System (Deep Technical Specification)
+* **Category**: Essential / Core Algorithmic Engine
 * **What It Entails**:
-  - A dual-calibrating Elo rating engine (400–2400+ Elo) that dynamically assesses both **Learner Skill ($R$)** and **Text/Word Difficulty ($D$)**.
-  - Automatically matches learners to content in their **Optimal Acquisition Zone ($i+1$ Comprehensible Input)** where expected fluency is 75%–85%.
-  - Maps seamlessly to international CEFR (A1–C2) and HSK (1–6) standards.
-* **Dependencies & Requirements**:
-  - **Match Algorithm**: Logistic Elo curve $E(S) = \frac{1}{1 + 10^{(D - R)/400}}$ with dynamic $K$-factor scaling.
-  - **Database**: `user_elo_profiles`, `text_difficulty_ratings`, and `elo_match_logs` tables.
-  - **API Endpoints**: `GET /api/elo/profile`, `GET /api/recommendations/next-read`.
-* **Implementation & Design Notes**:
-  - Sub-ratings track Lexical Elo ($R_{\text{lex}}$), Grammar Elo ($R_{\text{gram}}$), and Fluency Speed Elo ($R_{\text{speed}}$).
+  **Lex-Elo** is a dual-calibrating Elo rating system designed specifically for language acquisition in SLM. Inspired by competitive matchmaking in chess and Item Response Theory (IRT), Lex-Elo dynamically rates **both the Learner's Proficiency ($R$) and the Text/Word Difficulty ($D$)** on a unified numerical scale (400–2400+ Elo).
+
+#### A. The Dual-Calibrating Concept
+```
+                  ┌─────────────────────────────────────┐
+                  │          LEX-ELO MATCHMAKER         │
+                  │ Target expected outcome E(S) ≈ 0.80 │
+                  └──────────────────┬──────────────────┘
+                                     │
+           ┌─────────────────────────┴─────────────────────────┐
+           ▼                                                   ▼
+┌─────────────────────┐                               ┌───────────────────┐
+│ Learner Rating (R)  │  ◄────── Dual Update ────────►│ Text/Word Rating  │
+│ e.g. 1350 Elo (B1)  │         Outcome (S)           │  (D) 1420 Elo     │
+└─────────────────────┘                               └───────────────────┘
+```
+- **Match Setup**: A Learner ($R$) "plays" a Text or Character Cluster ($D$).
+- **Learner Win ($S = 1.0$)**: Fluent reading without lookups, fast processing time, correct quiz answers.
+- **Learner Loss / Struggle ($S < 0.5$)**: Frequent tooltip lookups, slow reading speed, missed quiz recall.
+- **Dual Adjustment**:
+  - If a beginner ($R = 900$) easily reads a text ($D = 1300$), the user's rating $R$ jumps **UP**, and the text's difficulty $D$ adjusts **DOWN**.
+  - Over thousands of reads across the user base, every text automatically calibrates to its exact true difficulty without requiring manual human labeling.
+
+#### B. Mathematical Formulation
+
+1. **Expected Outcome Calculation $E(S)$**:
+   The expected reading fluency score $E(S) \in (0, 1)$ of a learner with rating $R$ encountering a text/item of difficulty $D$:
+   $$E(S) = \frac{1}{1 + 10^{\frac{D - R}{400}}}$$
+
+2. **Observed Performance Score $S$**:
+   The actual outcome score $S \in [0.0, 1.0]$ per reading session:
+   $$S = \text{Clamp}\left(1.0 - \left( 0.60 \cdot \frac{N_{\text{lookups}}}{N_{\text{tokens}}} + 0.20 \cdot T_{\text{penalty}} + 0.20 \cdot M_{\text{quiz}} \right), 0.0, 1.0\right)$$
+
+3. **Dual Rating Update Rules**:
+   $$R_{\text{new}} = R_{\text{old}} + K_{\text{user}} \cdot (S - E(S))$$
+   $$D_{\text{new}} = D_{\text{old}} + K_{\text{text}} \cdot (E(S) - S)$$
+
+4. **Dynamic $K$-Factor Scaling**:
+   - **Provisional Users / Unrated Texts** ($< 10$ sessions): $K = 64$
+   - **Intermediate Calibration** (10–30 sessions): $K = 32$
+   - **Established Mastery** ($> 30$ sessions): $K = 16$
+
+#### C. Sub-Domain Elo Breakdown
+Lex-Elo tracks a **Global Elo** alongside three specialized sub-ratings:
+```
+                          ┌────────────────────────┐
+                          │    GLOBAL ELO (R)      │
+                          └───────────┬────────────┘
+                                      │
+        ┌─────────────────────────────┼─────────────────────────────┐
+        ▼                             ▼                             ▼
+┌───────────────┐             ┌───────────────┐             ┌───────────────┐
+│  LEXICAL ELO  │             │ GRAMMAR ELO   │             │ FLUENCY ELO   │
+│ R_lex (Vocab) │             │ R_gram (Syn)  │             │ R_speed (WPM) │
+└───────────────┘             └───────────────┘             └───────────────┘
+```
+- **Lexical Elo ($R_{\text{lex}}$)**: Tracks vocabulary breadth and character cluster recognition.
+- **Grammar & Syntax Elo ($R_{\text{gram}}$)**: Tracks ability to parse complex clause structures and idioms.
+- **Fluency Speed Elo ($R_{\text{speed}}$)**: Tracks raw processing speed (Words Per Minute relative to text difficulty).
+
+#### D. CEFR & HSK Mapping Scale
+
+| Lex-Elo Rating | CEFR Tier | HSK Level (Chinese) | Proficiency Description |
+| :--- | :--- | :--- | :--- |
+| **< 600** | **Pre-A1** | Below HSK 1 | Novice / Absolute Beginner |
+| **600 – 900** | **A1** | HSK 1 | Basic survival phrases & single characters |
+| **900 – 1200** | **A2** | HSK 2 | Simple sentences & everyday topics |
+| **1200 – 1500** | **B1** | HSK 3 | Independent reader, short stories, basic news |
+| **1500 – 1800** | **B2** | HSK 4 | Fluent reader, authentic prose, pop culture |
+| **1800 – 2100** | **C1** | HSK 5 | Advanced reader, complex essays & literature |
+| **2100+** | **C2** | HSK 6 | Near-native / Mastery level, classical poetry |
+
+#### E. Intelligent Matchmaking ("Comprehensible Input Engine")
+According to Stephen Krashen's $i+1$ language acquisition principle, optimal learning occurs in the **Goldilocks Zone ($E(S) \approx 0.75 - 0.85$)** where texts contain 80–85% known vocabulary and 15–20% new challenge.
+The Matchmaker automatically queries content for:
+$$D_{\text{text}} \approx R_{\text{user}} + 80 \text{ Elo}$$
+
+#### F. Database Schema (PostgreSQL / Supabase DDL)
+```sql
+-- User Elo Profile
+CREATE TABLE user_elo_profiles (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id),
+    language VARCHAR(10) NOT NULL,
+    global_elo INT DEFAULT 800,
+    lexical_elo INT DEFAULT 800,
+    grammar_elo INT DEFAULT 800,
+    fluency_elo INT DEFAULT 800,
+    confidence_k INT DEFAULT 64,
+    total_sessions INT DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Item / Text Difficulty Rating
+CREATE TABLE text_difficulty_ratings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    content_hash VARCHAR(64) UNIQUE NOT NULL,
+    title TEXT,
+    language VARCHAR(10) NOT NULL,
+    difficulty_elo INT DEFAULT 1000,
+    total_reads INT DEFAULT 0,
+    confidence_k INT DEFAULT 64,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Elo Match History Log
+CREATE TABLE elo_match_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id),
+    text_id UUID REFERENCES text_difficulty_ratings(id),
+    user_elo_before INT NOT NULL,
+    user_elo_after INT NOT NULL,
+    text_elo_before INT NOT NULL,
+    text_elo_after INT NOT NULL,
+    observed_score FLOAT NOT NULL,
+    expected_score FLOAT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+#### G. Safeguards & Anti-Gaming Controls
+1. **Copy-Paste Overriding**: Sessions lasting $< 3$ seconds or immediately cleared are discarded from Elo calculations.
+2. **Anti-Grinding Penalty**: Rereading the exact same text reduces $K_{\text{user}}$ exponentially to prevent artificial inflation.
+3. **Decay & Recalibration**: Inactivity $>30$ days restores $K_{\text{user}}$ to provisional status ($K=40$) for quick re-calibration upon return.
 
 ---
 
@@ -122,11 +237,11 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 ### 2.2 Story of the Day / Week (Graded Readers)
 * **Category**: Content Discovery / Immersive Reading
 * **What It Entails**:
-  - Short stories tiered by HSK / CEFR levels (A1, A2, B1, B2, C1, C2).
+  - Short stories tiered by HSK / CEFR levels (A1, A2, B1, B2, C1, C2) matched via the Lex-Elo engine.
   - Genres ranging from folklore and modern slice-of-life to mystery and sci-fi.
   - Interactive comprehension check at the end of each chapter.
 * **Dependencies & Requirements**:
-  - **Level Assessor**: Vocabulary frequency list filter ensuring story texts match target CEFR/HSK difficulty tiers.
+  - **Level Assessor**: Lex-Elo rating filter ensuring story texts match target CEFR/HSK difficulty tiers.
   - **LLM Generation Pipeline**: Automated daily story generator prompt tuned for specific target vocabulary lists.
   - **API Endpoints**: `GET /api/stories/daily`, `GET /api/stories/:story_id`.
 * **Implementation & Design Notes**:
@@ -154,10 +269,10 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 * **Category**: Social / Gamification
 * **What It Entails**:
   - Weekly reading challenges (e.g., "Read 5,000 Chinese characters this week").
-  - Friend leaderboards based on reading volume and review streaks.
+  - Friend leaderboards based on Lex-Elo gains, reading volume, and review streaks.
   - Group reading rooms where members read the same story together.
 * **Dependencies & Requirements**:
-  - **Gamification Engine**: Daily streak tracker, XP counter, badge achievements.
+  - **Gamification Engine**: Daily streak tracker, XP counter, Elo rating badge achievements.
   - **Real-time WebSockets / SSE**: Real-time room activity or periodic leaderboard sync.
 
 ---
@@ -194,6 +309,7 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Reading History & Persistence** | 🔴 High | 🟢 Low | Supabase / Postgres DB |
 | **Phase 1** | **Audio Playback (TTS)** | 🔴 High | 🟢 Low | Web Speech API |
+| **Phase 2** | **Lex-Elo Adaptive Rating Engine** | 🔴 High | 🔴 High | Dual Elo Logistic Algorithm |
 | **Phase 2** | **Learning Analytics & Stats** | 🟡 Medium | 🟡 Medium | Vocab state store |
 | **Phase 2** | **Poem & Story of the Day** | 🔴 High | 🟡 Medium | LLM Content Pipeline |
 | **Phase 3** | **SRS Quiz & Flashcard Engine** | 🔴 High | 🔴 High | SM-2 Algorithm & DB |
@@ -205,4 +321,4 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 
 ## Conclusion & Next Steps
 
-This feature roadmap transforms SLM from an interactive translation tool into a complete, habit-forming language acquisition platform. By combining **personalized reading persistence**, **daily content discovery**, and **spaced repetition**, SLM creates a complete loop: **Read → Map → Understand → Review → Master**.
+This feature roadmap transforms SLM from an interactive translation tool into a complete, habit-forming language acquisition platform. By combining **personalized reading persistence**, **Lex-Elo adaptive difficulty matching**, **daily content discovery**, and **spaced repetition**, SLM creates a complete loop: **Read → Map → Rate → Understand → Review → Master**.
