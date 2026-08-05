@@ -88,6 +88,21 @@ This document outlines the essential and extended feature ecosystem for **SLM (S
 
 ---
 
+### 1.5 Lex-Elo Adaptive Language Rating System
+* **Category**: Essential / Algorithmic Core (See full spec in `LEX_ELO_SYSTEM.md`)
+* **What It Entails**:
+  - A dual-calibrating Elo rating engine (400–2400+ Elo) that dynamically assesses both **Learner Skill ($R$)** and **Text/Word Difficulty ($D$)**.
+  - Automatically matches learners to content in their **Optimal Acquisition Zone ($i+1$ Comprehensible Input)** where expected fluency is 75%–85%.
+  - Maps seamlessly to international CEFR (A1–C2) and HSK (1–6) standards.
+* **Dependencies & Requirements**:
+  - **Match Algorithm**: Logistic Elo curve $E(S) = \frac{1}{1 + 10^{(D - R)/400}}$ with dynamic $K$-factor scaling.
+  - **Database**: `user_elo_profiles`, `text_difficulty_ratings`, and `elo_match_logs` tables.
+  - **API Endpoints**: `GET /api/elo/profile`, `GET /api/recommendations/next-read`.
+* **Implementation & Design Notes**:
+  - Sub-ratings track Lexical Elo ($R_{\text{lex}}$), Grammar Elo ($R_{\text{gram}}$), and Fluency Speed Elo ($R_{\text{speed}}$).
+
+---
+
 ## 2. Daily Content & Discovery (Engagement & Habit Loops)
 
 ### 2.1 Poem of the Day / Week
