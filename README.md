@@ -111,7 +111,13 @@ slm/
    cp .env.example .env
    ```
 
-3. **Start the Local Server**:
+3. **Start Development Server (Full-Stack)**:
+   ```bash
+   npm run dev
+   ```
+   Starts both the Express API backend (port `8000`) and Vite frontend dev server (port `5173`) concurrently with hot-reloading.
+
+4. **Production Build & Server**:
    ```bash
    npm start
    ```
