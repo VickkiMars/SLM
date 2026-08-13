@@ -1,0 +1,11 @@
+.env
+slm_preview.html
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+data/*.zip
+data/*.txt
+data/jmnedict*
+data/history_store.json
+Romaji:
