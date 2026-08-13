@@ -126,38 +126,38 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
     <section
       ref={readerRef}
       onClick={() => setActiveToken(null)}
-      className="w-full max-w-2xl bg-white rounded-3xl border border-slate-200/80 shadow-block p-6 sm:p-7 flex flex-col gap-6 relative"
+      className="varsity-card w-full max-w-2xl bg-white rounded-3xl border border-[#EAEAEA] shadow-xs p-6 sm:p-7 flex flex-col gap-6 relative"
     >
       {/* Header with Back Button */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div className="flex items-center justify-between pb-4 border-b border-[#EAEAEA]">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
               onClick={onBack}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition active:scale-95 shadow-2xs focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:outline-none"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CCCCCC] bg-white hover:bg-[#F0EEEA] text-[#111111] text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 shadow-2xs focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
               title="Return to input form"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
-              <span>Back to Input</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-[#1A56C4]" />
+              <span>Back</span>
             </button>
           )}
-          <div className="flex flex-wrap items-center gap-2 text-slate-900">
-            <BookOpen className="w-4 h-4 text-slm-pine" />
-            <h3 className="font-serif font-bold text-base">Interactive Reading View</h3>
+          <div className="flex flex-wrap items-center gap-2 text-[#111111]">
+            <BookOpen className="w-4 h-4 text-[#1A56C4]" />
+            <h3 className="font-serif font-extrabold text-base tracking-tight">Interactive Reading View</h3>
             {result?.progress && result.status !== 'complete' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-medium animate-pulse">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
-                <span>Translating batch {result.progress.current_batch} of {result.progress.total_batches}...</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFEEDB] text-[#2E0E00] border border-[#B84D00]/30 text-[10px] font-serif font-extrabold uppercase tracking-wider animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B84D00] animate-ping" />
+                <span>Batch {result.progress.current_batch} of {result.progress.total_batches}...</span>
               </span>
             )}
           </div>
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 text-slate-600 hover:border-slm-pine hover:text-slm-pine text-[11px] font-semibold transition active:scale-95 bg-white focus-visible:ring-2 focus-visible:ring-slm-pine focus-visible:outline-none"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CCCCCC] text-[#111111] hover:border-[#1A56C4] hover:text-[#1A56C4] hover:bg-[#E8EFFF]/40 text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 bg-white focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
         >
-          {copied ? <Check className="w-3.5 h-3.5 text-slm-orange" /> : <Copy className="w-3.5 h-3.5" />}
-          <span>{copied ? 'Copied Full Text' : 'Copy Text'}</span>
+          {copied ? <Check className="w-3.5 h-3.5 text-[#B84D00]" /> : <Copy className="w-3.5 h-3.5 text-[#1A56C4]" />}
+          <span>{copied ? 'Copied' : 'Copy'}</span>
         </button>
       </div>
 
@@ -165,12 +165,12 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
       {words.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-end">
-            <span className="text-[10px] text-slate-500 font-medium">Tap any word to inspect</span>
+            <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">Click any word to inspect</span>
           </div>
 
           <div
             dir={isRtl ? 'rtl' : 'ltr'}
-            className="p-5 sm:p-7 rounded-2xl bg-slate-50 border border-slate-200/80 text-base sm:text-lg font-sans text-slate-900 leading-relaxed tracking-normal select-none"
+            className="p-5 sm:p-7 rounded-2xl bg-[#F0EEEA]/60 border border-[#EAEAEA] text-base sm:text-lg font-sans text-[#111111] leading-relaxed tracking-normal select-none"
           >
             {words.map((w, idx) => {
               if (w.is_newline || w.source_word === '\n') {
@@ -182,7 +182,7 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
               }
 
               if (w.is_punct) {
-                return <span key={idx} className="text-slate-900 select-text">{w.source_word}</span>;
+                return <span key={idx} className="text-[#111111] select-text">{w.source_word}</span>;
               }
 
               const isSelected = activeToken === w;
@@ -196,8 +196,8 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleTokenClick(e, w)}
                   className={`token inline cursor-pointer outline-none ${
                     isSelected
-                      ? 'bg-amber-100 text-amber-950 font-medium rounded-xs px-0.5'
-                      : 'text-slate-900'
+                      ? 'bg-[#E8EFFF] text-[#00194B] font-bold border-b-2 border-[#1A56C4] rounded-xs px-1'
+                      : 'text-[#111111] hover:bg-[#E8EFFF]/50 hover:text-[#1A56C4]'
                   }`}
                   data-symbol={w.source_word || ''}
                   data-pron={w.pronunciation || ''}
@@ -213,10 +213,10 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
 
       {/* Supporting Full Translation Section */}
       <div className="flex flex-col gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
           Complete English Translation
         </span>
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 text-sm sm:text-base font-sans text-slate-800 leading-relaxed font-normal">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#F0EEEA]/60 border border-[#EAEAEA] text-sm sm:text-base font-sans text-[#111111] leading-relaxed font-normal">
           {fullText}
         </div>
       </div>
@@ -225,19 +225,19 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
       {activeToken && (
         <div
           style={{ left: `${popoverPos.left}px`, top: `${popoverPos.top}px` }}
-          className="fixed z-[250] bg-slate-900 text-white rounded-xl py-2 px-3 shadow-xl flex flex-col items-center justify-center gap-0.5 text-center min-w-[125px] max-w-[185px] border border-slate-700/80 animate-fadeIn pointer-events-auto"
+          className="fixed z-[250] bg-[#0B192C] text-white rounded-2xl py-2.5 px-3.5 shadow-2xl flex flex-col items-center justify-center gap-1 text-center min-w-[130px] max-w-[190px] border border-white/15 animate-fadeIn pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="font-serif font-semibold text-sm text-white leading-tight">
+          <div className="font-serif font-black text-sm text-white leading-tight">
             {activeToken.source_word}
           </div>
           {activeToken.pronunciation && (
-            <div className="font-mono text-[11px] text-indigo-300 font-medium leading-tight">
+            <div className="font-mono text-xs text-[#93C5FD] font-semibold leading-tight">
               {activeToken.pronunciation}
             </div>
           )}
           {activeToken.translated_word && activeToken.translated_word.toLowerCase() !== activeToken.pronunciation?.toLowerCase() && (
-            <div className="font-medium text-[11px] text-amber-400 leading-snug">
+            <div className="font-serif font-extrabold text-xs text-[#FFEEDB] leading-snug">
               {activeToken.translated_word}
             </div>
           )}

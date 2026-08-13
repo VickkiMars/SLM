@@ -59,38 +59,36 @@ export default function AuthModal({ isOpen, onClose, showToast }) {
     >
       <div className="drawer-container w-full max-w-sm flex flex-col gap-4">
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-slm-border">
+        <div className="flex items-center justify-between pb-3 border-b border-[#EAEAEA]">
           <div className="flex items-center gap-2">
-            <Key className="w-5 h-5 text-slm-pine" />
-            <h3 className="font-serif font-bold text-base text-slm-ink">Authentication Settings</h3>
+            <div className="w-7 h-7 rounded-lg bg-[#E8EFFF] text-[#1A56C4] flex items-center justify-center border border-[#1A56C4]/30">
+              <Key className="w-4 h-4 text-[#1A56C4]" />
+            </div>
+            <h3 className="font-serif font-extrabold text-base text-[#111111] tracking-tight">Authentication Settings</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slm-inkMuted hover:text-slm-ink hover:bg-slm-paper transition"
+            className="p-1.5 rounded-xl text-[#666666] hover:text-[#111111] hover:bg-[#F0EEEA] transition border border-[#CCCCCC]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex rounded-xl bg-slm-paper p-1 border border-slm-border">
+        <div className="m3-segmented-container">
           {isAuthConfigured && (
             <>
               <button
                 type="button"
                 onClick={() => { setActiveTab('login'); setErrorMsg(''); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
-                  activeTab === 'login' ? 'bg-white text-slm-pine shadow-sm' : 'text-slm-inkMuted hover:text-slm-ink'
-                }`}
+                className={`m3-segmented-item flex-1 justify-center ${activeTab === 'login' ? 'active' : ''}`}
               >
                 Login
               </button>
               <button
                 type="button"
                 onClick={() => { setActiveTab('signup'); setErrorMsg(''); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
-                  activeTab === 'signup' ? 'bg-white text-slm-pine shadow-sm' : 'text-slm-inkMuted hover:text-slm-ink'
-                }`}
+                className={`m3-segmented-item flex-1 justify-center ${activeTab === 'signup' ? 'active' : ''}`}
               >
                 Sign Up
               </button>
@@ -99,9 +97,7 @@ export default function AuthModal({ isOpen, onClose, showToast }) {
           <button
             type="button"
             onClick={() => { setActiveTab('token'); setErrorMsg(''); }}
-            className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
-              activeTab === 'token' ? 'bg-white text-slm-pine shadow-sm' : 'text-slm-inkMuted hover:text-slm-ink'
-            }`}
+            className={`m3-segmented-item flex-1 justify-center ${activeTab === 'token' ? 'active' : ''}`}
           >
             Bearer Token
           </button>

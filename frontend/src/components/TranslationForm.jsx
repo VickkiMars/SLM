@@ -87,25 +87,25 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
   return (
     <div className="w-full max-w-2xl flex flex-col gap-6">
       {/* Main Input Card */}
-      <section className="w-full bg-white rounded-3xl p-6 sm:p-7 border-2 border-slm-pine/60 shadow-block flex flex-col gap-5">
+      <section className="w-full bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-xs flex flex-col gap-5">
         {/* Card Header & Input Mode Switcher */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-slm-paper gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#EAEAEA] gap-3">
           <div className="flex items-center gap-3">
-            <h2 className="text-base font-bold font-serif tracking-tight flex items-center gap-2 text-slm-ink">
-              <Type className="w-4 h-4 text-slm-pine" />
+            <h2 className="text-base font-extrabold font-serif tracking-tight flex items-center gap-2 text-[#111111]">
+              <Type className="w-4 h-4 text-[#1A56C4]" />
               <span>Input Content</span>
             </h2>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             {/* Gospel of Mark Quick Access Selector */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 font-medium">
-              <BookOpen className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span className="font-semibold text-[11px] hidden xs:inline">馬可福音</span>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#FFEEDB] border border-[#B84D00]/30 text-xs text-[#2E0E00] font-sans font-medium">
+              <BookOpen className="w-3.5 h-3.5 text-[#B84D00] shrink-0" />
+              <span className="font-bold text-[11px] hidden xs:inline font-serif">馬可福音</span>
               <select
                 value={selectedMarkChapter}
                 onChange={(e) => handleSelectMarkChapter(e.target.value)}
-                className="bg-transparent text-xs font-semibold text-amber-900 outline-none cursor-pointer"
+                className="bg-transparent text-xs font-bold text-[#2E0E00] outline-none cursor-pointer"
                 aria-label="Select Gospel of Mark chapter"
               >
                 <option value="">Gospel of Mark...</option>
@@ -117,14 +117,12 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               </select>
             </div>
 
-            {/* Input mode tabs */}
-            <div className="flex rounded-xl bg-slm-paper p-1 border border-slm-border">
+            {/* Input mode segmented tabs */}
+            <div className="m3-segmented-container">
               <button
                 type="button"
                 onClick={() => setActiveTab('text')}
-                className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition ${
-                  activeTab === 'text' ? 'bg-white text-slm-pine shadow-xs' : 'text-slm-inkMuted hover:text-slm-ink'
-                }`}
+                className={`m3-segmented-item ${activeTab === 'text' ? 'active' : ''}`}
               >
                 <Type className="w-3.5 h-3.5" />
                 <span>Text</span>
@@ -132,9 +130,7 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               <button
                 type="button"
                 onClick={() => setActiveTab('file')}
-                className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition ${
-                  activeTab === 'file' ? 'bg-white text-slm-pine shadow-xs' : 'text-slm-inkMuted hover:text-slm-ink'
-                }`}
+                className={`m3-segmented-item ${activeTab === 'file' ? 'active' : ''}`}
               >
                 <Upload className="w-3.5 h-3.5" />
                 <span>File</span>
@@ -151,17 +147,17 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
                 onChange={(e) => setTextContent(e.target.value)}
                 rows={5}
                 placeholder="Paste your foreign text here or select Gospel of Mark above..."
-                className="w-full rounded-2xl border-2 border-slm-border bg-slm-paper p-4 text-sm font-sans text-slm-ink placeholder:text-slm-inkMuted/60 outline-none focus:border-slm-pine focus:bg-white transition resize-y min-h-[140px]"
+                className="varsity-input w-full p-4 text-sm font-sans text-[#111111] placeholder:text-[#666666]/60 outline-none resize-y min-h-[140px]"
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-[11px] text-slm-inkMuted font-medium flex items-center gap-1.5">
+                <span className="text-[11px] text-[#666666] font-sans font-medium flex items-center gap-1.5">
                   <span>{textContent.length} characters</span>
                   {textContent.length > 500 && (
-                    <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-semibold">
-                      Batched into {Math.ceil(textContent.length / 500)} chunks (≤500 chars)
+                    <span className="px-2 py-0.5 rounded-md bg-[#FFEEDB] border border-[#B84D00]/30 text-[#2E0E00] text-[10px] font-serif font-extrabold uppercase tracking-wider">
+                      Batched ({Math.ceil(textContent.length / 500)} chunks)
                     </span>
                   )}
                 </span>
@@ -169,7 +165,7 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
                   <button
                     type="button"
                     onClick={() => setTextContent('')}
-                    className="inline-flex items-center gap-1 text-[11px] text-slm-inkMuted hover:text-red-600 transition font-medium"
+                    className="inline-flex items-center gap-1 text-[11px] text-[#666666] hover:text-red-600 transition font-sans font-medium"
                     title="Clear text"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -181,20 +177,17 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               <button
                 type="submit"
                 disabled={isProcessing || !textContent.trim()}
-                className="bg-slm-pine hover:bg-slm-clay disabled:opacity-60 text-slm-paper text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition duration-300 shadow-block flex items-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-slm-pine focus-visible:outline-none"
+                className="varsity-btn-primary disabled:opacity-50 text-xs font-serif font-extrabold uppercase tracking-wider px-6 py-2.5 rounded-xl shadow-2xs flex items-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
               >
                 {isProcessing ? (
                   <>
-                    <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <div className="spinner-ring border-white border-t-transparent w-4 h-4" />
                     <span>Mapping &amp; Tokenizing...</span>
                   </>
                 ) : (
                   <>
                     <span>Start Reading Session</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </>
                 )}
               </button>

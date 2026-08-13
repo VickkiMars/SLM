@@ -112,9 +112,9 @@ export default function App() {
   };
 
   return (
-    <div className="bg-slm-paper text-slm-ink min-h-screen flex flex-col font-body">
-      {/* Ambient Wave Graphic */}
-      <div className="bg-wave" aria-hidden="true" />
+    <div className="bg-[#F6F4F0] text-[#111111] min-h-screen flex flex-col font-sans">
+      {/* Ambient Radial Grid Background */}
+      <div className="bg-radial-grid" aria-hidden="true" />
 
       {/* Global Header */}
       <Navbar
@@ -135,12 +135,17 @@ export default function App() {
         
         {/* Hero Banner */}
         <div className="mb-10 max-w-3xl w-full text-left">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight leading-tight text-slm-pine">
-            Read any foreign text. <span className="italic font-normal text-slm-orange">Understand every word.</span>
+          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-md bg-[#E8EFFF] text-[#00194B] border border-[#1A56C4]/20 text-xs font-extrabold uppercase tracking-wider font-serif">
+            <span className="w-2 h-2 rounded-full bg-[#1A56C4]" />
+            <span>Sound &amp; Language Mapper</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight text-[#111111]">
+            Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
           </h1>
 
-          <p className="mt-3 text-slm-inkMuted text-sm sm:text-base leading-relaxed">
-            Paste any foreign text or upload a document. Every character and word group gets mapped — hover or click any one for instant meanings and pronunciations.
+          <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-normal">
+            Paste foreign text or upload a document. Every character cluster gets mapped — hover or click any word for instant meanings and pronunciations.
           </p>
         </div>
 
