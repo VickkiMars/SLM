@@ -1,0 +1,102 @@
+# SLM Language Model User Stories
+
+Total Stories: 96
+
+| User Story ID | User Story |
+| :--- | :--- |
+| `SLM-US-001` | As a prospective learner, I want to try a language match as a guest so that I can experience SLM before committing to an account. |
+| `SLM-US-002` | As a learner, I want to create an SLM account so that I can maintain my language ratings and history. |
+| `SLM-US-003` | As a learner, I want to maintain a profile containing my username, avatar, country, institution and bio so that I can establish my identity within the language community. |
+| `SLM-US-004` | As a learner, I want to select the languages I am interested in so that SLM can track my ratings and activity for those languages. |
+| `SLM-US-005` | As a learner, I want to control my privacy, friends, blocked users and online status so that I can manage how I interact with the SLM community. |
+| `SLM-US-006` | As a new language learner, I want to complete a placement sequence so that SLM can estimate my starting skill instead of assigning me an arbitrary rating. |
+| `SLM-US-007` | As a learner, I want one clear rating for each language so that I can easily understand and communicate my competitive proficiency. |
+| `SLM-US-008` | As a newly rated player, I want my rating to be marked provisional while SLM collects enough games to establish it so that I understand that my rating is still being calibrated. |
+| `SLM-US-009` | As a learner, I want to see how my language rating changes over time so that I can track my competitive development. |
+| `SLM-US-010` | As a learner, I want SLM to track vocabulary, grammar, listening, reaction time, topic accuracy and streak data separately from my headline rating so that I can understand the specific components of my language ability. |
+| `SLM-US-011` | As a player, I want to choose which language I want to play so that my match tests the language I am currently practicing. |
+| `SLM-US-012` | As a player, I want to select Word, Phrase, Sentence or an exam-aligned level so that I can compete at an appropriate difficulty. |
+| `SLM-US-013` | As a player, I want to choose Bullet, Blitz, Rapid or Classical time control so that I can select the pace at which I want to compete. |
+| `SLM-US-014` | As a player, I want to choose between rated and casual matches so that I can practice competitively or without affecting my rating. |
+| `SLM-US-015` | As a player, I want to choose a language game mode such as Word Duel, Listening Duel, Tone Duel or Grammar Duel so that I can practice different language skills. |
+| `SLM-US-016` | As a competitive learner, I want SLM to automatically match me with an appropriately rated opponent so that my matches are competitive and meaningful. |
+| `SLM-US-017` | As a learner, I want to challenge a friend directly so that we can compete against each other. |
+| `SLM-US-018` | As a learner, I want to generate a private challenge link so that I can invite someone to play without relying on public matchmaking. |
+| `SLM-US-019` | As a learner, I want to accept or decline an incoming challenge so that I control which matches I play. |
+| `SLM-US-020` | As a player, I want a dedicated competitive Arena Board that displays the prompt, answers, timer, opponent status, score, rating information and streak so that language practice feels like a sport. |
+| `SLM-US-021` | As a player, I want to answer prompts through appropriate interaction methods such as selecting an option or typing an answer so that different language skills can be tested naturally. |
+| `SLM-US-022` | As a player, I want each prompt to have a fixed response window so that matches reward both knowledge and reaction speed. |
+| `SLM-US-023` | As a player, I want to see whether my opponent has answered or is still thinking so that I feel their presence during the match. |
+| `SLM-US-024` | As a player, I want to see my score and current answer streak during the match so that I understand how I am performing. |
+| `SLM-US-025` | As a player, I want to receive my final result and updated rating when a match ends so that I immediately understand the outcome. |
+| `SLM-US-026` | As a language learner, I want to identify the meaning of a foreign word under time pressure so that I can compete on vocabulary knowledge. |
+| `SLM-US-027` | As a language learner, I want to identify the foreign translation of a native-language word so that I can test active vocabulary recall. |
+| `SLM-US-028` | As a language learner, I want to identify what I hear so that I can test my listening ability competitively. |
+| `SLM-US-029` | As a learner of a tonal language, I want to identify correct tone or pronunciation so that I can practice an important language-specific skill. |
+| `SLM-US-030` | As a learner, I want to translate or identify correct sentences so that I can compete at sentence-level proficiency. |
+| `SLM-US-031` | As a learner, I want to identify grammatically correct constructions so that I can test my grammar knowledge. |
+| `SLM-US-032` | As a learner, I want to complete sentences with the correct word so that I can practice contextual language understanding. |
+| `SLM-US-033` | As an exam-track learner, I want to select an exam-aligned content band such as HSK, JLPT, CEFR or another supported standard so that my practice remains relevant to my examination level. |
+| `SLM-US-034` | As an exam-track learner, I want matches and puzzles to stay within my selected level so that I am not overwhelmed by unrelated difficulty. |
+| `SLM-US-035` | As a learner, I want one featured Daily Puzzle so that I have a simple daily reason to return to SLM. |
+| `SLM-US-036` | As a learner, I want consecutive correct answers to build a puzzle streak so that I can challenge myself to maintain accuracy. |
+| `SLM-US-037` | As a learner, I want to select puzzle themes such as Food, Travel, Verbs, Family or Grammar so that I can focus on specific areas. |
+| `SLM-US-038` | As an exam-track learner, I want to filter puzzles by exams such as HSK, JLPT, IELTS, TOEFL, WAEC or JAMB English so that my practice aligns with my goals. |
+| `SLM-US-039` | As a learner, I want to see my puzzle history, accuracy and weakest themes so that I know what I need to practice. |
+| `SLM-US-040` | As a learner, I want to save interesting or difficult puzzles so that I can revisit them later. |
+| `SLM-US-041` | As an absolute beginner, I want to learn basic scripts, pronunciation and foundational language concepts before entering competitive play so that I can participate meaningfully. |
+| `SLM-US-042` | As a beginner, I want to practice core vocabulary by level so that I can build the foundation required for competitive matches. |
+| `SLM-US-043` | As a learner, I want structured explanations of grammar principles so that I can understand the language behind the competitive prompts. |
+| `SLM-US-044` | As a beginner, I want SLM to guide me from Learn to Puzzle to Match so that I have a clear progression into competitive play. |
+| `SLM-US-045` | As a learner, I want to search for a word or phrase so that I can understand how it is used in real language. |
+| `SLM-US-046` | As a learner, I want to see sentences containing a word or phrase so that I can understand its contextual usage. |
+| `SLM-US-047` | As a learner, I want to hear audio examples where available so that I can understand how the language sounds. |
+| `SLM-US-048` | As a learner, I want to see alternative expressions and related vocabulary so that I can expand my understanding beyond a single dictionary definition. |
+| `SLM-US-049` | As a player, I want SLM to analyze my completed match so that I understand my performance beyond simply winning or losing. |
+| `SLM-US-050` | As a player, I want to see my vocabulary, grammar and listening performance so that I know which skills are strongest and weakest. |
+| `SLM-US-051` | As a player, I want to see my average reaction time so that I can understand how quickly I respond under competitive conditions. |
+| `SLM-US-052` | As a player, I want SLM to identify recurring weaknesses such as specific grammar patterns or vocabulary pairs so that I know what to work on. |
+| `SLM-US-053` | As a player, I want SLM to recommend a lesson or puzzle set based on my weaknesses so that my next practice session is targeted. |
+| `SLM-US-054` | As a player, I want to review each question from my match and see the correct answer so that I can learn from individual mistakes. |
+| `SLM-US-055` | As a learner, I want to discover upcoming tournaments in languages and levels I care about so that I can participate in organized competition. |
+| `SLM-US-056` | As a player, I want to join an Arena tournament so that I can compete against multiple players within a scheduled event. |
+| `SLM-US-057` | As a participant, I want to see the live tournament leaderboard so that I know my position throughout the event. |
+| `SLM-US-058` | As a participant, I want to see my tournament results and match history after an event so that my competitive record is preserved. |
+| `SLM-US-059` | As a tournament organizer, I want to configure a language tournament with its language, level, time control, game mode, schedule and visibility so that I can run an organized competition. |
+| `SLM-US-060` | As a campus organizer, I want to schedule recurring language tournaments for my department or institution so that language competition becomes a regular community activity. |
+| `SLM-US-061` | As a competitive learner, I want to see the global leaderboard for my language so that I can understand my position in the wider community. |
+| `SLM-US-062` | As a student, I want to see how my language rating compares with students at my institution so that I have an achievable local competitive target. |
+| `SLM-US-063` | As a competitive learner, I want to filter rankings by language, level, time period and other available dimensions so that I can compare myself within a meaningful competitive context. |
+| `SLM-US-064` | As a learner, I want to compare my rating with my friends so that competition remains socially meaningful. |
+| `SLM-US-065` | As a puzzle player, I want a separate puzzle leaderboard so that puzzle performance can be compared independently from match rating. |
+| `SLM-US-066` | As a player, I want to add other learners as friends so that I can maintain competitive relationships on SLM. |
+| `SLM-US-067` | As a player, I want to privately message another player so that I can communicate beyond individual matches. |
+| `SLM-US-068` | As a player, I want optional match chat so that I can interact with my opponent when appropriate. |
+| `SLM-US-069` | As a learner, I want to follow friends' activity so that I can see their matches and competitive milestones. |
+| `SLM-US-070` | As a user, I want to block or report another user so that I can protect myself from abuse or inappropriate behavior. |
+| `SLM-US-071` | As a learner, I want my language ratings displayed on my profile so that my competitive proficiency is visible. |
+| `SLM-US-072` | As a learner, I want to see my rating graph and history so that I can track my development. |
+| `SLM-US-073` | As a player, I want to see my wins, losses and draws so that my competitive history is visible. |
+| `SLM-US-074` | As a learner, I want my underlying skill statistics displayed alongside my rating so that my profile tells a richer story than one number. |
+| `SLM-US-075` | As a player, I want my achievements and badges displayed on my profile so that milestones in my language journey are visible. |
+| `SLM-US-076` | As a player, I want to be notified when someone challenges me so that I can respond. |
+| `SLM-US-077` | As a participant, I want reminders when a tournament is approaching or results are available so that I stay connected to events. |
+| `SLM-US-078` | As a user, I want to know when another player sends me a message so that I can respond. |
+| `SLM-US-079` | As a learner, I want to be notified when I reach rating milestones so that progress feels visible and meaningful. |
+| `SLM-US-080` | As a language teacher, I want to create a structured Study containing lessons and chapters so that I can organize language material for my learners. |
+| `SLM-US-081` | As a teacher, I want to share my Study with my students so that they have a common learning resource. |
+| `SLM-US-082` | As a Study contributor, I want to co-edit a Study so that multiple teachers or advanced learners can build content together. |
+| `SLM-US-083` | As a learner or teacher, I want to discuss individual Study chapters so that learning can happen collaboratively. |
+| `SLM-US-084` | As a teacher, I want to import vocabulary lists into a Study so that I can build structured material efficiently. |
+| `SLM-US-085` | As a teacher, I want to clone an existing Study so that I can adapt useful material for my own class. |
+| `SLM-US-086` | As a spectator, I want to watch a live language tournament or match so that I can participate in the community even when I am not playing. |
+| `SLM-US-087` | As a spectator, I want to follow a live leaderboard so that I can remain engaged with an ongoing competition. |
+| `SLM-US-088` | As a player, I want to report suspected cheating so that competitive results remain trustworthy. |
+| `SLM-US-089` | As a user, I want to report abusive behavior so that the SLM community remains safe. |
+| `SLM-US-090` | As a user, I want to block or mute another user so that I can control unwanted interactions. |
+| `SLM-US-091` | As an SLM administrator, I want the platform to detect suspicious rating behavior so that competitive rankings remain credible. |
+| `SLM-US-092` | As an SLM administrator, I want to manage prompts and their language, level, theme and answer metadata so that the competitive content pool remains reliable. |
+| `SLM-US-093` | As an SLM administrator, I want to manage user accounts and moderation issues so that the platform remains healthy. |
+| `SLM-US-094` | As an SLM administrator, I want to oversee tournaments and competitive events so that the platform operates reliably. |
+| `SLM-US-095` | As an SLM administrator, I want to review moderation reports so that cheating and abuse can be addressed. |
+| `SLM-US-096` | As an SLM administrator, I want to monitor rating distributions and content difficulty so that the rating system can be calibrated using real-world data. |

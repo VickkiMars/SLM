@@ -6,6 +6,7 @@ const { OpenAI } = require('openai');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const dbService = require('../services/dbService');
 const historyService = require('../services/historyService');
 const translationService = require('../services/translationService');
 const { chunkContent } = require('../services/chunkHelper');
@@ -27,11 +28,6 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }
-});
-
-const openaiClient = new OpenAI({
-  apiKey: process.env.FIKRA_API_KEY || 'placeholder',
-  baseURL: 'https://api.fikra.ai/v1'
 });
 
 global.translationQueue = global.translationQueue || [];

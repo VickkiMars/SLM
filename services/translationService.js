@@ -1,9 +1,10 @@
-const gtranslate = require('@vitalets/google-translate-api');
-const chineseMapper = require('./chineseMapper');
+const { OpenAI } = require('openai');
+const promptService = require('./promptService');
 const japaneseMapper = require('./japaneseMapper');
+const chineseMapper = require('./chineseMapper');
 const { transliterateKorean, transliterateArabic, transliterateHebrew } = require('./transliterationHelper');
 
-// ISO 639-1 language code mapping helper for 8 Major Languages
+// Language ISO codes helper
 const LANG_CODES = {
   English: 'en',
   French: 'fr',
@@ -22,12 +23,23 @@ function getIsoCode(langName, defaultCode = 'en') {
   return LANG_CODES[langName] || defaultCode;
 }
 
-// Detection helpers
-const containsChineseChars = (text) => /[\u4e00-\u9fa5]/.test(text);
-const containsJapaneseKana = (text) => /[\u3040-\u309f\u30a0-\u30ff]/.test(text);
-const containsKoreanHangul = (text) => /[\uac00-\ud7af]/.test(text);
-const containsArabicScript = (text) => /[\u0600-\u06FF]/.test(text);
-const containsHebrewScript = (text) => /[\u0590-\u05FF]/.test(text);
+/**
+ * Initialize OpenAI Client dynamically based on environment variables
+ */
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY || process.env.FIKRA_API_KEY || process.env.FIKRA_APIKEY;
+  if (!apiKey || apiKey === 'placeholder') {
+    return null;
+  }
+
+  const options = { apiKey };
+  const baseURL = process.env.OPENAI_BASE_URL || process.env.FIKRA_BASE_URL;
+  if (baseURL) {
+    options.baseURL = baseURL;
+  }
+
+  return new OpenAI(options);
+}
 
 /**
  * Parse custom vocabulary string formatted as: word::meaning::pronunciation (one per line)
@@ -53,72 +65,59 @@ function parseCustomVocab(customVocabStr) {
   return map;
 }
 
-const fetch = require('node-fetch');
+/**
+ * Primary OpenAI Translation Engine with Structured Output Schema
+ */
+async function translateWithOpenAI({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
+  const openai = getOpenAIClient();
+  if (!openai) {
+    console.warn('[translationService] No valid OPENAI_API_KEY found in environment. Falling back to local tokenization mapper.');
+    return null;
+  }
 
-async function robustTranslate(text, targetCode = 'en', sourceCode = 'ja') {
-  if (!text || !text.trim()) return '';
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  const messages = promptService.buildTranslationMessages({
+    content,
+    original_language,
+    target_language,
+    custom_vocab
+  });
 
-  const src = (sourceCode && sourceCode !== 'Auto') ? sourceCode : 'ja';
-
-  // 1. Unthrottled GTX client API with browser User-Agent
   try {
-    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + src + '&tl=' + targetCode + '&dt=t&q=' + encodeURIComponent(text);
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
+    const completion = await openai.chat.completions.create({
+      model,
+      messages,
+      response_format: { type: 'json_object' },
+      temperature: 0.3
     });
-    const data = await response.json();
-    if (data && data[0] && Array.isArray(data[0])) {
-      const translated = data[0].map(x => x[0]).filter(Boolean).join('');
-      if (translated) return translated;
-    }
-  } catch (gtxErr) {
-    console.warn('[translationService] GTX primary API warning:', gtxErr.message);
-  }
 
-  // 2. MyMemory Translation API Fallback
-  try {
-    const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${src}|${targetCode}`;
-    const mmRes = await fetch(myMemoryUrl);
-    const mmData = await mmRes.json();
-    if (mmData && mmData.responseData && mmData.responseData.translatedText) {
-      const trText = mmData.responseData.translatedText;
-      if (trText && trText !== text) return trText;
+    const rawResponse = completion.choices[0]?.message?.content || '';
+    if (!rawResponse) {
+      throw new Error('OpenAI returned empty completion content.');
     }
-  } catch (mmErr) {
-    console.warn('[translationService] MyMemory API warning:', mmErr.message);
-  }
 
-  // 3. Secondary fallback via vitalets
-  const translateFn = typeof gtranslate === 'function' ? gtranslate : gtranslate.translate || gtranslate.default;
-  try {
-    const res = await translateFn(text, { to: targetCode });
-    if (res && res.text) return res.text;
+    const parsed = JSON.parse(rawResponse);
+    return {
+      full_translation: parsed.full_translation || '',
+      words: Array.isArray(parsed.words) ? parsed.words : []
+    };
   } catch (err) {
-    console.error('[translationService] Secondary API error:', err.message);
+    console.error('[translationService] OpenAI Translation Error:', err.message);
+    return null;
   }
-
-  return text;
 }
 
 /**
- * Main Translation & Character Mapping Orchestrator
+ * Fallback Local Mapper when OpenAI key is absent or API is unreachable
  */
-async function translateAndMap({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
-  if (!content || !content.trim()) {
-    throw new Error('Content is required for translation.');
-  }
-
+async function fallbackLocalMapper({ content, original_language = 'Auto', target_language = 'English' }) {
   const targetCode = getIsoCode(target_language, 'en');
-  const sourceCode = getIsoCode(original_language, 'ja');
-  const customMap = parseCustomVocab(custom_vocab);
 
-  // 1. Full Sentence Translation via Robust Multi-API Provider
-  const fullTranslation = await robustTranslate(content, targetCode, sourceCode);
-
-  // 2. Character & Word Mapping Strategy for 8 Major Languages
-  let words = [];
+  const containsJapaneseKana = (text) => /[\u3040-\u309f\u30a0-\u30ff]/.test(text);
+  const containsChineseChars = (text) => /[\u4e00-\u9fa5]/.test(text);
+  const containsKoreanHangul = (text) => /[\uac00-\ud7af]/.test(text);
+  const containsArabicScript = (text) => /[\u0600-\u06FF]/.test(text);
+  const containsHebrewScript = (text) => /[\u0590-\u05FF]/.test(text);
 
   const isJapanese = original_language === 'Japanese' || containsJapaneseKana(content);
   const isChinese = !isJapanese && (original_language === 'Chinese' || original_language === 'Mandarin' || containsChineseChars(content));
@@ -126,20 +125,22 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
   const isArabic = original_language === 'Arabic' || containsArabicScript(content);
   const isHebrew = original_language === 'Hebrew' || containsHebrewScript(content);
 
+  let words = [];
+  let fullTranslation = `[Offline mode] Translation of "${content.slice(0, 30)}..."`;
+
   if (isJapanese) {
     try {
-      words = await japaneseMapper.mapJapaneseText(content, (word) => robustTranslate(word, targetCode));
-    } catch (jErr) {
-      console.error('[translationService] Japanese mapping error:', jErr.message);
+      words = await japaneseMapper.mapJapaneseText(content, async (w) => w);
+    } catch {
+      words = [];
     }
   } else if (isChinese) {
     try {
       words = await chineseMapper.mapChineseText(content);
-    } catch (cErr) {
-      console.error('[translationService] Chinese mapping error:', cErr.message);
+    } catch {
+      words = [];
     }
   } else {
-    // Word & Punctuation tokenization preserving exact formatting, newlines, spaces, and punctuation
     const tokens = [];
     let i = 0;
     const len = content.length;
@@ -147,7 +148,6 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
     while (i < len) {
       const char = content[i];
 
-      // 1. Linebreaks
       if (char === '\n' || char === '\r') {
         if (char === '\r' && content[i + 1] === '\n') i++;
         tokens.push({ source_word: '\n', is_newline: true });
@@ -155,7 +155,6 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
         continue;
       }
 
-      // 2. Whitespace (spaces and tabs)
       if (char === ' ' || char === '\t') {
         let ws = '';
         while (i < len && (content[i] === ' ' || content[i] === '\t')) {
@@ -166,19 +165,14 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
         continue;
       }
 
-      // 3. Punctuation
       if (/[.,/;':"<>?!@#$%^&*()_+\-=\[\]{}|\\`~«»„“”—–…¡¿]/i.test(char)) {
         tokens.push({ source_word: char, is_punct: true });
         i++;
         continue;
       }
 
-      // 4. Word Token
       let wordStr = '';
-      while (
-        i < len &&
-        !/[\s\n\r.,/;':"<>?!@#$%^&*()_+\-=\[\]{}|\\`~«»„“”—–…¡¿]/.test(content[i])
-      ) {
+      while (i < len && !/[\s\n\r.,/;':"<>?!@#$%^&*()_+\-=\[\]{}|\\`~«»„“”—–…¡¿]/.test(content[i])) {
         wordStr += content[i];
         i++;
       }
@@ -191,27 +185,12 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
 
         tokens.push({
           source_word: wordStr,
-          translated_word: fullTranslation ? '(See full text)' : '',
+          translated_word: wordStr,
           pronunciation: pron
         });
       }
     }
     words = tokens;
-  }
-
-  // 3. Apply Custom Vocabulary Overrides
-  if (Object.keys(customMap).length > 0) {
-    words = words.map(w => {
-      const override = customMap[w.source_word] || customMap[w.source_word.toLowerCase()];
-      if (override) {
-        return {
-          source_word: w.source_word,
-          translated_word: override.translated_word || w.translated_word,
-          pronunciation: override.pronunciation || w.pronunciation
-        };
-      }
-      return w;
-    });
   }
 
   return {
@@ -220,7 +199,44 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
   };
 }
 
-module.exports = {
-  translateAndMap
-};
+/**
+ * Main Translation Orchestrator using OpenAI with Local Fallback
+ */
+async function translateAndMap({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
+  if (!content || !content.trim()) {
+    throw new Error('Content is required for translation.');
+  }
 
+  const customMap = parseCustomVocab(custom_vocab);
+
+  // 1. Attempt OpenAI Structured Translation Engine
+  let result = await translateWithOpenAI({ content, original_language, target_language, custom_vocab });
+
+  // 2. Fallback to local tokenization mapper if OpenAI API fails or is unconfigured
+  if (!result) {
+    result = await fallbackLocalMapper({ content, original_language, target_language });
+  }
+
+  // 3. Post-process Custom Vocabulary Overrides
+  if (Object.keys(customMap).length > 0 && Array.isArray(result.words)) {
+    result.words = result.words.map(w => {
+      if (!w.source_word) return w;
+      const override = customMap[w.source_word] || customMap[w.source_word.toLowerCase()];
+      if (override) {
+        return {
+          ...w,
+          translated_word: override.translated_word || w.translated_word,
+          pronunciation: override.pronunciation || w.pronunciation
+        };
+      }
+      return w;
+    });
+  }
+
+  return result;
+}
+
+module.exports = {
+  translateAndMap,
+  getOpenAIClient
+};

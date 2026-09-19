@@ -131,48 +131,57 @@ export default function App() {
       />
 
       {/* Main Workspace Area */}
-      <main className="ml-0 md:ml-20 mt-16 flex-1 px-6 sm:px-8 lg:px-12 py-10 max-w-6xl w-full md:w-[calc(100vw-80px)] mx-auto relative z-10 flex flex-col items-center">
-        
-        {/* Hero Banner */}
-        <div className="mb-10 max-w-3xl w-full text-left">
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-md bg-[#E8EFFF] text-[#00194B] border border-[#1A56C4]/20 text-xs font-extrabold uppercase tracking-wider font-serif">
-            <span className="w-2 h-2 rounded-full bg-[#1A56C4]" />
-            <span>Sound &amp; Language Mapper</span>
-          </div>
+      {(() => {
+        const isReadingMode = Boolean(activeResult || isProcessing || error);
+        return (
+          <main className={`ml-0 md:ml-20 mt-16 flex-1 w-full md:w-[calc(100vw-80px)] mx-auto relative z-10 flex flex-col items-center ${
+            isReadingMode ? 'px-2 sm:px-4 md:px-6 py-6 max-w-none' : 'px-6 sm:px-8 lg:px-12 py-10 max-w-6xl'
+          }`}>
+            
+            {/* Hero Banner - hidden in active reading mode for edge-to-edge reading canvas */}
+            {!isReadingMode && (
+              <div className="mb-10 max-w-3xl w-full text-left">
+                <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-md bg-[#E8EFFF] text-[#00194B] border border-[#1A56C4]/20 text-xs font-extrabold uppercase tracking-wider font-serif">
+                  <span className="w-2 h-2 rounded-full bg-[#1A56C4]" />
+                  <span>Sound &amp; Language Mapper</span>
+                </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight text-[#111111]">
-            Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
-          </h1>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight text-[#111111]">
+                  Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
+                </h1>
 
-          <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-normal">
-            Paste foreign text or upload a document. Every character cluster gets mapped — hover or click any word for instant meanings and pronunciations.
-          </p>
-        </div>
+                <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-normal">
+                  Paste foreign text or upload a document. Every character cluster gets mapped — hover or click any word for instant meanings and pronunciations.
+                </p>
+              </div>
+            )}
 
-        {/* Layout Panels Container */}
-        <div className="w-full flex flex-col items-center gap-8">
-          {activeResult || isProcessing || error ? (
-            <ReaderView
-              result={activeResult}
-              isProcessing={isProcessing}
-              error={error}
-              showToast={showToast}
-              onBack={() => {
-                setActiveResult(null);
-                setError(null);
-              }}
-            />
-          ) : (
-            <TranslationForm
-              onSubmitText={handleSubmitText}
-              onSubmitFile={handleSubmitFile}
-              isProcessing={isProcessing}
-              onOpenAuth={() => setIsAuthOpen(true)}
-              token={token}
-            />
-          )}
-        </div>
-      </main>
+            {/* Layout Panels Container */}
+            <div className="w-full flex flex-col items-center gap-8">
+              {isReadingMode ? (
+                <ReaderView
+                  result={activeResult}
+                  isProcessing={isProcessing}
+                  error={error}
+                  showToast={showToast}
+                  onBack={() => {
+                    setActiveResult(null);
+                    setError(null);
+                  }}
+                />
+              ) : (
+                <TranslationForm
+                  onSubmitText={handleSubmitText}
+                  onSubmitFile={handleSubmitFile}
+                  isProcessing={isProcessing}
+                  onOpenAuth={() => setIsAuthOpen(true)}
+                  token={token}
+                />
+              )}
+            </div>
+          </main>
+        );
+      })()}
 
       {/* Auth Modal */}
       <AuthModal

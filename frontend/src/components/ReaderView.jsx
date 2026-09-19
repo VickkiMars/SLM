@@ -126,7 +126,7 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
     <section
       ref={readerRef}
       onClick={() => setActiveToken(null)}
-      className="varsity-card w-full max-w-2xl bg-white rounded-3xl border border-[#EAEAEA] shadow-xs p-6 sm:p-7 flex flex-col gap-6 relative"
+      className="w-full flex flex-col gap-6 relative px-1 sm:px-3 md:px-6 py-2 sm:py-4"
     >
       {/* Header with Back Button */}
       <div className="flex items-center justify-between pb-4 border-b border-[#EAEAEA]">
@@ -163,14 +163,14 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
 
       {/* Interactive Hero Character Token Map */}
       {words.length > 0 && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center justify-end">
-            <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">Click any word to inspect</span>
+            <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">Tap or click any segment to inspect</span>
           </div>
 
           <div
             dir={isRtl ? 'rtl' : 'ltr'}
-            className="p-5 sm:p-7 rounded-2xl bg-[#F0EEEA]/60 border border-[#EAEAEA] text-base sm:text-lg font-sans text-[#111111] leading-relaxed tracking-normal select-none"
+            className="w-full py-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans text-[#111111] leading-relaxed sm:leading-loose tracking-tight select-none border-b border-[#EAEAEA] pb-8"
           >
             {words.map((w, idx) => {
               if (w.is_newline || w.source_word === '\n') {
@@ -194,10 +194,10 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
                   aria-label={`Inspect token ${w.source_word}`}
                   onClick={(e) => handleTokenClick(e, w)}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleTokenClick(e, w)}
-                  className={`token inline cursor-pointer outline-none ${
+                  className={`token inline cursor-pointer outline-none transition-all ${
                     isSelected
-                      ? 'bg-[#E8EFFF] text-[#00194B] font-bold border-b-2 border-[#1A56C4] rounded-xs px-1'
-                      : 'text-[#111111] hover:bg-[#E8EFFF]/50 hover:text-[#1A56C4]'
+                      ? 'underline decoration-[3.5px] underline-offset-8 decoration-[#1A56C4] text-[#1A56C4] font-extrabold'
+                      : 'text-[#111111] hover:underline hover:decoration-2 hover:underline-offset-8 hover:decoration-[#1A56C4]/60'
                   }`}
                   data-symbol={w.source_word || ''}
                   data-pron={w.pronunciation || ''}
@@ -212,11 +212,11 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
       )}
 
       {/* Supporting Full Translation Section */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 w-full">
         <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
           Complete English Translation
         </span>
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#F0EEEA]/60 border border-[#EAEAEA] text-sm sm:text-base font-sans text-[#111111] leading-relaxed font-normal">
+        <div className="w-full py-3 text-base sm:text-lg md:text-xl font-sans text-[#333333] leading-relaxed font-normal border-b border-[#EAEAEA] pb-6">
           {fullText}
         </div>
       </div>
