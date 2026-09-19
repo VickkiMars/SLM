@@ -82,12 +82,12 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
 
   return (
     <div
-      className="drawer-overlay flex items-start justify-end p-3 z-[200]"
+      className="drawer-overlay flex items-end sm:items-start justify-center sm:justify-end p-0 sm:p-4 z-[200]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
     >
-      <div className="drawer-container w-full max-w-md flex flex-col gap-4 max-h-[calc(100vh-84px)] overflow-y-auto">
+      <div className="drawer-container w-full max-w-md flex flex-col gap-4 rounded-t-3xl sm:rounded-3xl max-h-[88vh] sm:max-h-[calc(100vh-84px)] overflow-y-auto p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#EAEAEA]">
           <div className="flex items-center gap-2">
