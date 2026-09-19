@@ -1,21 +1,14 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
-function getHeaders(token, extra = {}) {
-  const headers = { ...extra };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  return headers;
-}
-
-export async function translateText({ content, original_language, target_language }, token) {
+export async function translateText({ content, original_language, target_language, custom_vocab }) {
   const res = await fetch(`${API_BASE}/api/text/translate`, {
     method: 'POST',
-    headers: getHeaders(token, { 'Content-Type': 'application/json' }),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       content,
       original_language: original_language || undefined,
-      target_language
+      target_language,
+      custom_vocab
     })
   });
   const data = await res.json();
@@ -23,7 +16,7 @@ export async function translateText({ content, original_language, target_languag
   return data;
 }
 
-export async function translateFile(file, originalLanguage, targetLanguage, token) {
+export async function translateFile(file, originalLanguage, targetLanguage) {
   const fd = new FormData();
   fd.append('file', file);
   fd.append('original_language', originalLanguage);
@@ -34,7 +27,6 @@ export async function translateFile(file, originalLanguage, targetLanguage, toke
 
   const res = await fetch(`${API_BASE}/api/upload/translate`, {
     method: 'POST',
-    headers: getHeaders(token),
     body: fd
   });
   const data = await res.json();
@@ -42,16 +34,16 @@ export async function translateFile(file, originalLanguage, targetLanguage, toke
   return data;
 }
 
-export function subscribeJobStatus(jobId, token, { onUpdate, onComplete, onError }) {
+export function subscribeJobStatus(jobId, callbacks = {}) {
+  const { onUpdate, onComplete, onError } = callbacks;
   const controller = new AbortController();
 
   fetch(`${API_BASE}/api/status/${jobId}`, {
-    headers: getHeaders(token),
     signal: controller.signal
   }).then(async (response) => {
     if (!response.ok) {
       const err = await response.json().catch(() => ({ detail: 'Status check failed' }));
-      onError(err);
+      if (onError) onError(err);
       return;
     }
 
@@ -72,11 +64,11 @@ export function subscribeJobStatus(jobId, token, { onUpdate, onComplete, onError
           const blob = JSON.parse(line.slice(5).trim());
           if (blob.status === 'complete') {
             controller.abort();
-            onComplete(blob);
+            if (onComplete) onComplete(blob);
             return;
           } else if (blob.status === 'failed' || blob.status === 'error') {
             controller.abort();
-            onError(blob);
+            if (onError) onError(blob);
             return;
           } else if (onUpdate) {
             onUpdate(blob);
@@ -87,7 +79,7 @@ export function subscribeJobStatus(jobId, token, { onUpdate, onComplete, onError
       }
     }
   }).catch((err) => {
-    if (err.name !== 'AbortError') {
+    if (err.name !== 'AbortError' && onError) {
       onError({ detail: 'Connection interrupted waiting for translation result.' });
     }
   });
@@ -95,32 +87,28 @@ export function subscribeJobStatus(jobId, token, { onUpdate, onComplete, onError
   return () => controller.abort();
 }
 
-export async function fetchHistory({ query = '', language = '', tag = '', bookmarked = false } = {}, token) {
+export async function fetchHistory({ query = '', language = '', tag = '', bookmarked = false } = {}) {
   const q = encodeURIComponent(query);
   const lang = encodeURIComponent(language);
   const bm = bookmarked ? 'true' : 'false';
 
-  const res = await fetch(`${API_BASE}/api/history?query=${q}&language=${lang}&bookmarked=${bm}`, {
-    headers: getHeaders(token)
-  });
+  const res = await fetch(`${API_BASE}/api/history?query=${q}&language=${lang}&bookmarked=${bm}`);
   const data = await res.json();
   if (!res.ok) throw data;
   return data;
 }
 
-export async function fetchSessionById(sessionId, token) {
-  const res = await fetch(`${API_BASE}/api/history/${sessionId}`, {
-    headers: getHeaders(token)
-  });
+export async function fetchSessionById(sessionId) {
+  const res = await fetch(`${API_BASE}/api/history/${sessionId}`);
   const data = await res.json();
   if (!res.ok) throw data;
   return data.session;
 }
 
-export async function updateSession(sessionId, updates, token) {
+export async function updateSession(sessionId, updates) {
   const res = await fetch(`${API_BASE}/api/history/${sessionId}`, {
     method: 'PATCH',
-    headers: getHeaders(token, { 'Content-Type': 'application/json' }),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates)
   });
   const data = await res.json();
@@ -128,10 +116,9 @@ export async function updateSession(sessionId, updates, token) {
   return data.session;
 }
 
-export async function deleteSession(sessionId, token) {
+export async function deleteSession(sessionId) {
   const res = await fetch(`${API_BASE}/api/history/${sessionId}`, {
-    method: 'DELETE',
-    headers: getHeaders(token)
+    method: 'DELETE'
   });
   const data = await res.json();
   if (!res.ok) throw data;

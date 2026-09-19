@@ -89,23 +89,23 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
     >
       <div className="drawer-container w-full max-w-md flex flex-col gap-4 max-h-[calc(100vh-84px)] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-slm-border">
+        <div className="flex items-center justify-between pb-3 border-b border-[#EAEAEA]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-slm-pine/10 text-slm-pine flex items-center justify-center">
-              <Clock className="w-3.5 h-3.5" />
+            <div className="w-7 h-7 rounded-lg bg-[#E8EFFF] text-[#1A56C4] flex items-center justify-center border border-[#1A56C4]/30">
+              <Clock className="w-4 h-4" />
             </div>
-            <h3 className="font-serif font-bold text-base text-slm-ink">Reading History</h3>
+            <h3 className="font-serif font-extrabold text-base text-[#111111] tracking-tight">Reading History</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slm-inkMuted hover:text-slm-ink hover:bg-slm-paper transition"
+            className="p-1.5 rounded-xl text-[#666666] hover:text-[#111111] hover:bg-[#F0EEEA] transition border border-[#CCCCCC]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {/* Search Input */}
           <div className="relative">
             <input
@@ -113,9 +113,9 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search sessions, text, tags..."
-              className="w-full rounded-xl border-2 border-slm-border bg-slm-paper pl-9 pr-3 py-2 text-xs font-sans text-slm-ink outline-none focus:border-slm-pine transition"
+              className="varsity-input w-full pl-9 pr-3 py-2 text-xs font-sans text-[#111111] outline-none focus:border-[#1A56C4] transition"
             />
-            <Search className="w-3.5 h-3.5 text-slm-inkMuted absolute left-3 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-[#666666] absolute left-3 top-3 pointer-events-none" />
           </div>
 
           {/* Filters */}
@@ -123,7 +123,7 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
             <select
               value={langFilter}
               onChange={(e) => setLangFilter(e.target.value)}
-              className="flex-1 rounded-xl border-2 border-slm-border bg-slm-paper px-2.5 py-1.5 text-[11px] font-medium text-slm-ink outline-none focus:border-slm-pine"
+              className="flex-1 rounded-xl border border-[#CCCCCC] bg-white px-3 py-2 text-xs font-sans font-medium text-[#111111] outline-none focus:border-[#1A56C4]"
             >
               <option value="All">All Languages</option>
               <option value="French">French</option>
@@ -137,14 +137,14 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
 
             <button
               onClick={() => setBookmarkedOnly(!bookmarkedOnly)}
-              className={`px-2.5 py-1.5 rounded-xl border-2 text-[11px] font-bold transition flex items-center gap-1 ${
+              className={`px-3 py-2 rounded-xl border text-xs font-serif font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 ${
                 bookmarkedOnly
-                  ? 'border-slm-pine bg-slm-pine/10 text-slm-pine'
-                  : 'border-slm-border text-slm-inkMuted hover:border-slm-pine hover:text-slm-pine'
+                  ? 'border-[#1A56C4] bg-[#E8EFFF] text-[#00194B]'
+                  : 'border-[#CCCCCC] text-[#666666] hover:border-[#1A56C4] hover:text-[#1A56C4] bg-white'
               }`}
             >
-              <Star className="w-3 h-3 fill-current" />
-              <span>Bookmarked</span>
+              <Star className="w-3.5 h-3.5 fill-current text-[#B84D00]" />
+              <span>Saved</span>
             </button>
           </div>
         </div>

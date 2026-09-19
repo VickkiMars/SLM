@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import AuthModal from './components/AuthModal';
 import TranslationForm from './components/TranslationForm';
 import ReaderView from './components/ReaderView';
 import HistoryDrawer from './components/HistoryDrawer';
@@ -10,8 +8,6 @@ import Toast from './components/Toast';
 import { translateText, translateFile, subscribeJobStatus } from './services/apiService';
 
 export default function App() {
-  const { token } = useAuth();
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -48,7 +44,7 @@ export default function App() {
     setIsProcessing(true);
     setError(null);
 
-    subscribeJobStatus(jobId, token, {
+    subscribeJobStatus(jobId, {
       onUpdate: (blob) => {
         if (blob && blob.output) {
           setIsProcessing(false);
@@ -72,7 +68,7 @@ export default function App() {
     setActiveResult(null);
 
     try {
-      const data = await translateText(payload, token);
+      const data = await translateText(payload);
       if (data.job_id) {
         handleStartJob(data.job_id);
       }
@@ -88,7 +84,7 @@ export default function App() {
     setActiveResult(null);
 
     try {
-      const data = await translateFile(file, srcLang, tgtLang, token);
+      const data = await translateFile(file, srcLang, tgtLang);
       if (data.job_id) {
         handleStartJob(data.job_id);
       }
@@ -112,14 +108,13 @@ export default function App() {
   };
 
   return (
-    <div className="bg-slm-paper text-slm-ink min-h-screen flex flex-col font-body">
-      {/* Ambient Wave Graphic */}
-      <div className="bg-wave" aria-hidden="true" />
+    <div className="bg-[#F6F4F0] text-[#111111] min-h-screen flex flex-col font-sans">
+      {/* Ambient Radial Grid Background */}
+      <div className="bg-radial-grid" aria-hidden="true" />
 
       {/* Global Header */}
       <Navbar
         onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenAuth={() => setIsAuthOpen(true)}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         isSidebarOpen={isSidebarOpen}
       />
@@ -131,50 +126,55 @@ export default function App() {
       />
 
       {/* Main Workspace Area */}
-      <main className="ml-0 md:ml-20 mt-16 flex-1 px-6 sm:px-8 lg:px-12 py-10 max-w-6xl w-full md:w-[calc(100vw-80px)] mx-auto relative z-10 flex flex-col items-center">
-        
-        {/* Hero Banner */}
-        <div className="mb-10 max-w-3xl w-full text-left">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight leading-tight text-slm-pine">
-            Read any foreign text. <span className="italic font-normal text-slm-orange">Understand every word.</span>
-          </h1>
+      {(() => {
+        const isReadingMode = Boolean(activeResult || isProcessing || error);
+        return (
+          <main className={`ml-0 md:ml-20 mt-16 flex-1 w-full md:w-[calc(100vw-80px)] mx-auto relative z-10 flex flex-col items-center ${
+            isReadingMode ? 'px-2 sm:px-4 md:px-6 py-6 max-w-none' : 'px-6 sm:px-8 lg:px-12 py-10 max-w-6xl'
+          }`}>
+            
+            {/* Hero Banner - hidden in active reading mode for edge-to-edge reading canvas */}
+            {!isReadingMode && (
+              <div className="mb-10 max-w-3xl w-full text-left">
+                <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-md bg-[#E8EFFF] text-[#00194B] border border-[#1A56C4]/20 text-xs font-extrabold uppercase tracking-wider font-serif">
+                  <span className="w-2 h-2 rounded-full bg-[#1A56C4]" />
+                  <span>Sound &amp; Language Mapper</span>
+                </div>
 
-          <p className="mt-3 text-slm-inkMuted text-sm sm:text-base leading-relaxed">
-            Paste any foreign text or upload a document. Every character and word group gets mapped — hover or click any one for instant meanings and pronunciations.
-          </p>
-        </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight text-[#111111]">
+                  Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
+                </h1>
 
-        {/* Layout Panels Container */}
-        <div className="w-full flex flex-col items-center gap-8">
-          {activeResult || isProcessing || error ? (
-            <ReaderView
-              result={activeResult}
-              isProcessing={isProcessing}
-              error={error}
-              showToast={showToast}
-              onBack={() => {
-                setActiveResult(null);
-                setError(null);
-              }}
-            />
-          ) : (
-            <TranslationForm
-              onSubmitText={handleSubmitText}
-              onSubmitFile={handleSubmitFile}
-              isProcessing={isProcessing}
-              onOpenAuth={() => setIsAuthOpen(true)}
-              token={token}
-            />
-          )}
-        </div>
-      </main>
+                <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-normal">
+                  Paste foreign text or upload a document. Every character cluster gets mapped — hover or click any word for instant meanings and pronunciations.
+                </p>
+              </div>
+            )}
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        showToast={showToast}
-      />
+            {/* Layout Panels Container */}
+            <div className="w-full flex flex-col items-center gap-8">
+              {isReadingMode ? (
+                <ReaderView
+                  result={activeResult}
+                  isProcessing={isProcessing}
+                  error={error}
+                  showToast={showToast}
+                  onBack={() => {
+                    setActiveResult(null);
+                    setError(null);
+                  }}
+                />
+              ) : (
+                <TranslationForm
+                  onSubmitText={handleSubmitText}
+                  onSubmitFile={handleSubmitFile}
+                  isProcessing={isProcessing}
+                />
+              )}
+            </div>
+          </main>
+        );
+      })()}
 
       {/* Reading History Drawer */}
       <HistoryDrawer

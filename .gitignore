@@ -8,4 +8,7 @@ data/*.zip
 data/*.txt
 data/jmnedict*
 data/history_store.json
+data/*.db
+data/*.db-wal
+data/*.db-shm
 Romaji:
