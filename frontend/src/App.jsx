@@ -145,7 +145,7 @@ export default function App() {
                   Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
                 </h1>
 
-                <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed font-sans font-normal">
+                <p className="mt-3 text-[#666666] text-sm sm:text-base leading-relaxed font-sans font-normal">
                   Paste foreign text or upload a document. Every character cluster gets mapped — hover or click any word for instant meanings and pronunciations.
                 </p>
               </div>
