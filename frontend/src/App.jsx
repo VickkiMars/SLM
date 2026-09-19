@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
 import TranslationForm from './components/TranslationForm';
 import ReaderView from './components/ReaderView';
 import HistoryDrawer from './components/HistoryDrawer';
@@ -9,7 +8,6 @@ import { translateText, translateFile, subscribeJobStatus } from './services/api
 
 export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeResult, setActiveResult] = useState(() => {
     try {
@@ -115,34 +113,22 @@ export default function App() {
       {/* Global Header */}
       <Navbar
         onOpenHistory={() => setIsHistoryOpen(true)}
-        onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
-        isSidebarOpen={isSidebarOpen}
-      />
-
-      {/* Side Navigation Rail / Drawer */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* Main Workspace Area */}
       {(() => {
         const isReadingMode = Boolean(activeResult || isProcessing || error);
         return (
-          <main className={`ml-0 md:ml-20 mt-16 flex-1 w-full md:w-[calc(100vw-80px)] mx-auto relative z-10 flex flex-col items-center ${
-            isReadingMode ? 'px-2 sm:px-4 md:px-6 py-6 max-w-none' : 'px-6 sm:px-8 lg:px-12 py-10 max-w-6xl'
+          <main className={`mt-16 flex-1 w-full mx-auto relative z-10 flex flex-col items-center ${
+            isReadingMode ? 'px-2 sm:px-4 md:px-6 py-6 max-w-none' : 'px-4 sm:px-8 lg:px-12 py-10 max-w-5xl'
           }`}>
             
-            {/* Hero Banner - hidden in active reading mode for edge-to-edge reading canvas */}
+            {/* Hero Banner - clean headline without eyebrow pill */}
             {!isReadingMode && (
               <div className="mb-10 max-w-3xl w-full text-left">
-                <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-md bg-[#E8EFFF] text-[#00194B] border border-[#1A56C4]/20 text-xs font-extrabold uppercase tracking-wider font-serif">
-                  <span className="w-2 h-2 rounded-full bg-[#1A56C4]" />
-                  <span>Sound &amp; Language Mapper</span>
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight text-[#111111]">
-                  Read any foreign text. <span className="font-serif italic font-black text-[#B84D00]">Understand every word.</span>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight">
+                  <span className="text-[#1A56C4]">Read any foreign text. </span>
+                  <span className="font-serif italic font-black text-[#E8640A]">Understand every word.</span>
                 </h1>
 
                 <p className="mt-3 text-[#666666] text-sm sm:text-base leading-relaxed font-sans font-normal">
