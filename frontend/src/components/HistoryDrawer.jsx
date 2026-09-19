@@ -181,7 +181,7 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
                     <button
                       onClick={(e) => handleToggleBookmark(e, s)}
                       className={`p-1 rounded transition ${
-                        s.is_bookmarked ? 'text-amber-500' : 'text-slm-inkMuted hover:text-amber-500'
+                        s.is_bookmarked ? 'text-[#B84D00]' : 'text-[#666666] hover:text-[#B84D00]'
                       }`}
                       title={s.is_bookmarked ? 'Remove bookmark' : 'Bookmark session'}
                     >

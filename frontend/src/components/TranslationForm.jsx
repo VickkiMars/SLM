@@ -155,11 +155,6 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               <div className="flex items-center gap-3">
                 <span className="text-[11px] text-[#666666] font-sans font-medium flex items-center gap-1.5">
                   <span>{textContent.length} characters</span>
-                  {textContent.length > 500 && (
-                    <span className="px-2 py-0.5 rounded-md bg-[#FFEEDB] border border-[#B84D00]/30 text-[#2E0E00] text-[10px] font-serif font-extrabold uppercase tracking-wider">
-                      Batched ({Math.ceil(textContent.length / 500)} chunks)
-                    </span>
-                  )}
                 </span>
                 {textContent && (
                   <button
@@ -226,21 +221,21 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               onDragLeave={() => setIsDragOver(false)}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center gap-2 ${
-                isDragOver ? 'border-slm-pine bg-slm-pine/5' : 'border-slm-border bg-slm-paper hover:border-slm-pine'
+                isDragOver ? 'border-[#1A56C4] bg-[#E8EFFF]' : 'border-[#CCCCCC] bg-[#F6F4F0] hover:border-[#1A56C4]'
               }`}
             >
-              <div className="w-10 h-10 rounded-full bg-slm-pine/10 text-slm-pine flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-[#E8EFFF] text-[#1A56C4] flex items-center justify-center">
                 <FileText className="w-5 h-5" />
               </div>
               {selectedFile ? (
                 <div>
-                  <p className="font-semibold text-xs text-slm-ink">{selectedFile.name}</p>
-                  <p className="text-[10px] text-slm-inkMuted">{(selectedFile.size / 1024).toFixed(1)} KB</p>
+                  <p className="font-semibold text-xs text-[#111111]">{selectedFile.name}</p>
+                  <p className="text-[10px] text-[#666666]">{(selectedFile.size / 1024).toFixed(1)} KB</p>
                 </div>
               ) : (
                 <div>
-                  <p className="font-semibold text-xs text-slm-ink">Click or drop text document here</p>
-                  <p className="text-[10px] text-slm-inkMuted mt-0.5">Supports plain text (.txt)</p>
+                  <p className="font-semibold text-xs text-[#111111]">Click or drop text document here</p>
+                  <p className="text-[10px] text-[#666666] mt-0.5">Supports plain text (.txt)</p>
                 </div>
               )}
             </div>
@@ -249,20 +244,17 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
               <button
                 type="submit"
                 disabled={isProcessing || !selectedFile}
-                className="bg-slm-pine hover:bg-slm-clay disabled:opacity-60 text-slm-paper text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition duration-300 shadow-block flex items-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-slm-pine focus-visible:outline-none"
+                className="varsity-btn-primary disabled:opacity-50 text-xs font-serif font-extrabold uppercase tracking-wider px-6 py-2.5 rounded-xl shadow-2xs flex items-center gap-2 active:scale-95 focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
               >
                 {isProcessing ? (
                   <>
-                    <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <div className="spinner-ring border-white border-t-transparent w-4 h-4" />
                     <span>Processing Document...</span>
                   </>
                 ) : (
                   <>
                     <span>Start Reading Session</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </>
                 )}
               </button>
@@ -270,7 +262,7 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
           </form>
         )}
         {/* Edit Vocabulary Toggle Bar */}
-        <div className="pt-2 border-t border-slate-200/80 flex flex-col gap-3">
+        <div className="pt-2 border-t border-[#EAEAEA] flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <label className="inline-flex items-center gap-3 cursor-pointer select-none">
               <div className="relative">
@@ -280,25 +272,25 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
                   onChange={(e) => setShowCustomVocab(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slm-pine shadow-inner"></div>
+                <div className="w-9 h-5 bg-[#CCCCCC] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#CCCCCC] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1A56C4] shadow-inner"></div>
               </div>
-              <span className="text-xs font-semibold text-slate-800">Edit vocabulary</span>
+              <span className="text-xs font-serif font-extrabold text-[#111111]">Edit vocabulary</span>
             </label>
-            <span className="text-[10px] text-slate-500 font-medium">Optional custom word overrides</span>
+            <span className="text-[10px] font-sans font-medium text-[#666666]">Optional custom word overrides</span>
           </div>
 
           {/* Expandable Custom Vocabulary Editor */}
           {showCustomVocab && (
-            <div className="flex flex-col gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 transition-all animate-fadeIn">
+            <div className="flex flex-col gap-2 p-4 bg-[#F0EEEA] rounded-2xl border border-[#CCCCCC] transition-all animate-fadeIn">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <label className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
                   Custom Vocabulary List
                 </label>
-                <code className="font-mono text-[10px] bg-white px-2 py-0.5 rounded border border-slate-200 text-slm-pine font-medium">
+                <code className="font-mono text-[10px] bg-white px-2 py-0.5 rounded border border-[#CCCCCC] text-[#1A56C4] font-medium">
                   word::meaning::pronunciation
                 </code>
               </div>
-              <p className="text-[11px] text-slate-600 leading-tight">
+              <p className="text-[11px] font-sans text-[#666666] leading-tight">
                 Add custom definitions or pronunciations to override or complement automatic dictionary lookups (one entry per line):
               </p>
               <textarea
@@ -306,7 +298,7 @@ export default function TranslationForm({ onSubmitText, onSubmitFile, isProcessi
                 onChange={(e) => setCustomVocab(e.target.value)}
                 rows={4}
                 placeholder={"如果::if::rúguǒ\n愛::love::ài\n街头::street corner::jiētóu"}
-                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-xs font-mono text-slate-900 outline-none focus:border-slm-pine transition resize-y"
+                className="w-full rounded-xl border border-[#CCCCCC] bg-white p-3 text-xs font-mono text-[#111111] outline-none focus:border-[#1A56C4] transition resize-y"
               />
             </div>
           )}

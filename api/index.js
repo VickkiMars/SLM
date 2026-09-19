@@ -61,54 +61,29 @@ async function translateText(document) {
 async function processJob(job) {
   try {
     console.log(`Processing translation job ${job.job_id}`);
-    const rawContent = job.document.content || '';
-    const chunks = chunkContent(rawContent, 500);
-    const totalBatches = chunks.length || 1;
+    const modelOutput = await translateText(job.document);
 
-    let accFullTranslation = '';
-    let accWords = [];
-
-    for (let i = 0; i < chunks.length; i++) {
-      const chunkDoc = { ...job.document, content: chunks[i] };
-      const modelOutput = await translateText(chunkDoc);
-
-      let parsedBatch = null;
-      try {
-        parsedBatch = JSON.parse(modelOutput);
-      } catch (pErr) {
-        parsedBatch = { full_translation: modelOutput, words: [] };
-      }
-
-      if (parsedBatch.full_translation) {
-        accFullTranslation += (accFullTranslation ? '\n' : '') + parsedBatch.full_translation;
-      }
-
-      if (Array.isArray(parsedBatch.words)) {
-        accWords.push(...parsedBatch.words);
-      }
-
-      const isLastBatch = i === chunks.length - 1;
-      const combinedOutput = JSON.stringify({
-        full_translation: accFullTranslation,
-        words: accWords
-      });
-
-      storeResult(job.job_id, {
-        user_id: job.user_id,
-        output: combinedOutput,
-        status: isLastBatch ? 'complete' : 'processing',
-        progress: {
-          current_batch: i + 1,
-          total_batches: totalBatches
-        },
-        created_at: Date.now() / 1000
-      });
-
-      // Delay between batches to prevent rate limiting
-      if (!isLastBatch) {
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-      }
+    let parsed = null;
+    try {
+      parsed = JSON.parse(modelOutput);
+    } catch (pErr) {
+      parsed = { full_translation: modelOutput, words: [] };
     }
+
+    const fullTranslation = parsed.full_translation || '';
+    const words = Array.isArray(parsed.words) ? parsed.words : [];
+
+    const outputStr = JSON.stringify({
+      full_translation: fullTranslation,
+      words
+    });
+
+    storeResult(job.job_id, {
+      user_id: job.user_id,
+      output: outputStr,
+      status: 'complete',
+      created_at: Date.now() / 1000
+    });
 
     // Auto-archive session into reading history
     try {
@@ -117,8 +92,8 @@ async function processJob(job) {
         source_text: job.document.content,
         original_language: job.document.original_language || 'Auto',
         target_language: job.document.target_language || 'English',
-        full_translation: accFullTranslation,
-        token_metadata: { full_translation: accFullTranslation, words: accWords },
+        full_translation: fullTranslation,
+        token_metadata: { full_translation: fullTranslation, words },
         tags: [job.document.original_language || 'Reading'].filter(Boolean)
       });
     } catch (saveErr) {
