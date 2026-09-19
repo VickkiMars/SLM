@@ -1,9 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { Clock, Search, Menu, Key, User, Sparkles, X } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { Clock, Search, Menu, Sparkles, X } from 'lucide-react';
 
-export default function Navbar({ onOpenHistory, onOpenAuth, onToggleSidebar, isSidebarOpen }) {
-  const { user, token } = useAuth();
+export default function Navbar({ onOpenHistory, onToggleSidebar, isSidebarOpen }) {
   const searchInputRef = useRef(null);
 
   // Keyboard shortcut (⌘K or Ctrl+K) to focus search
@@ -64,7 +62,6 @@ export default function Navbar({ onOpenHistory, onOpenAuth, onToggleSidebar, isS
 
       {/* Actions & Controls */}
       <div className="flex items-center gap-2.5 sm:gap-3">
-
         {/* History Action Button */}
         <button
           onClick={onOpenHistory}
@@ -74,41 +71,7 @@ export default function Navbar({ onOpenHistory, onOpenAuth, onToggleSidebar, isS
           <Clock className="w-3.5 h-3.5 text-[#1A56C4]" />
           <span className="hidden sm:inline">History</span>
         </button>
-
-        {/* Auth / Account Action Button */}
-        <button
-          onClick={onOpenAuth}
-          className={`inline-flex items-center gap-1.5 px-4 py-2 h-10 rounded-xl border text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none ${
-            user
-              ? 'bg-[#E8EFFF] border-[#1A56C4]/40 text-[#00194B] hover:bg-[#E8EFFF]/80'
-              : token
-              ? 'bg-[#FFEEDB] border-[#B84D00]/40 text-[#2E0E00] hover:bg-[#FFEEDB]/80'
-              : 'bg-[#1A56C4] border-[#1545A2] text-white hover:bg-[#1545A2] shadow-2xs'
-          }`}
-          title={user ? `Account (${user.email})` : token ? "Manual Token Configured" : "Sign In / Bearer Token"}
-        >
-          {user ? (
-            <>
-              <div className="w-4 h-4 rounded-full bg-[#1A56C4] text-white text-[9px] font-serif font-extrabold flex items-center justify-center uppercase">
-                {user.email?.[0] || 'U'}
-              </div>
-              <span className="max-w-[80px] sm:max-w-[110px] truncate">{user.email?.split('@')[0]}</span>
-            </>
-          ) : token ? (
-            <>
-              <Key className="w-3.5 h-3.5 text-[#B84D00]" />
-              <span className="hidden sm:inline">Token Active</span>
-              <span className="sm:hidden">Token</span>
-            </>
-          ) : (
-            <>
-              <User className="w-3.5 h-3.5" />
-              <span>Account</span>
-            </>
-          )}
-        </button>
       </div>
     </header>
   );
 }
-

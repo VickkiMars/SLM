@@ -5,7 +5,7 @@ const crypto = require('crypto');
  * Save a new reading session to SQLite (RLS Enforced)
  */
 async function saveSession({
-  user_id,
+  user_id = 'default_user',
   title,
   source_text,
   original_language = 'Auto',
@@ -15,7 +15,7 @@ async function saveSession({
   tags = [],
   is_bookmarked = false
 }) {
-  if (!user_id) throw new Error('user_id is required to save reading session');
+  const uid = user_id || 'default_user';
   if (!source_text) throw new Error('source_text is required');
 
   const autoTitle = title || (source_text.trim().slice(0, 40) + (source_text.length > 40 ? '...' : ''));
@@ -23,7 +23,7 @@ async function saveSession({
   const character_count = source_text.length;
   const id = crypto.randomUUID();
 
-  return dbService.saveSession(user_id, {
+  return dbService.saveSession(uid, {
     id,
     title: autoTitle,
     source_text,

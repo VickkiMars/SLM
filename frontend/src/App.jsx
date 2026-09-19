@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import AuthModal from './components/AuthModal';
 import TranslationForm from './components/TranslationForm';
 import ReaderView from './components/ReaderView';
 import HistoryDrawer from './components/HistoryDrawer';
@@ -10,8 +8,6 @@ import Toast from './components/Toast';
 import { translateText, translateFile, subscribeJobStatus } from './services/apiService';
 
 export default function App() {
-  const { token } = useAuth();
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -48,7 +44,7 @@ export default function App() {
     setIsProcessing(true);
     setError(null);
 
-    subscribeJobStatus(jobId, token, {
+    subscribeJobStatus(jobId, {
       onUpdate: (blob) => {
         if (blob && blob.output) {
           setIsProcessing(false);
@@ -72,7 +68,7 @@ export default function App() {
     setActiveResult(null);
 
     try {
-      const data = await translateText(payload, token);
+      const data = await translateText(payload);
       if (data.job_id) {
         handleStartJob(data.job_id);
       }
@@ -88,7 +84,7 @@ export default function App() {
     setActiveResult(null);
 
     try {
-      const data = await translateFile(file, srcLang, tgtLang, token);
+      const data = await translateFile(file, srcLang, tgtLang);
       if (data.job_id) {
         handleStartJob(data.job_id);
       }
@@ -119,7 +115,6 @@ export default function App() {
       {/* Global Header */}
       <Navbar
         onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenAuth={() => setIsAuthOpen(true)}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         isSidebarOpen={isSidebarOpen}
       />
@@ -174,21 +169,12 @@ export default function App() {
                   onSubmitText={handleSubmitText}
                   onSubmitFile={handleSubmitFile}
                   isProcessing={isProcessing}
-                  onOpenAuth={() => setIsAuthOpen(true)}
-                  token={token}
                 />
               )}
             </div>
           </main>
         );
       })()}
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        showToast={showToast}
-      />
 
       {/* Reading History Drawer */}
       <HistoryDrawer

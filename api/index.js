@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const { OpenAI } = require('openai');
 const fs = require('fs');
@@ -44,38 +43,12 @@ function storeResult(jobId, data) {
 const promptPath = path.join(process.cwd(), 'data', 'prompt.txt');
 const translationPrompt = fs.existsSync(promptPath) ? fs.readFileSync(promptPath, 'utf8') : '';
 
-// ====== Helper functions ======
-function getAuthHeader(req) {
-  return req.headers['authorization'] || req.headers['authorisation'];
-}
-
-function verifyToken(token) {
-  try {
-    const tokenStr = token.startsWith('Bearer ') ? token.slice(7) : token;
-    const payload = jwt.verify(tokenStr, process.env.SUPABASE_JWT_SECRET, {
-      algorithms: ['HS256'],
-      audience: 'authenticated'
-    });
-    return {
-      user_id: payload.sub,
-      user_email: payload.email,
-      user_name: payload.name || payload.user_metadata?.name
-    };
-  } catch (err) {
-    return null;
-  }
-}
-
+// ====== User Helper ======
 function getReqUser(req) {
-  const authHeader = getAuthHeader(req);
-  if (authHeader) {
-    const u = verifyToken(authHeader);
-    if (u) return u;
-  }
   return {
-    user_id: 'default_guest_user',
-    user_email: 'guest@slm.app',
-    user_name: 'Guest User'
+    user_id: 'default_user',
+    user_email: 'user@slm.app',
+    user_name: 'SLM User'
   };
 }
 
