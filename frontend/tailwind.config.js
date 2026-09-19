@@ -17,14 +17,15 @@ module.exports = {
         mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace']
       },
       colors: {
+        // SS4 Brand Palette Integration
         varsity: {
-          blue: '#1A56C4',
-          blueHover: '#1545A2',
-          blueContainer: '#E8EFFF',
+          blue: '#1A56C4',           // Primary Brand Blue (Varsity Blue)
+          blueHover: '#1545A2',      // Primary Hover / Active Blue
+          blueContainer: '#E8EFFF',  // Soft Blue Background / Tint
           onBlueContainer: '#00194B',
-          orange: '#B84D00',
-          orangeBright: '#E8640A',
-          orangeContainer: '#FFEEDB',
+          orange: '#B84D00',         // Standard / Light Background Orange (WCAG AA)
+          orangeBright: '#E8640A',   // Bright / Dark Backdrops Orange
+          orangeContainer: '#FFEEDB',// Soft Orange Background / Tint
           onOrangeContainer: '#2E0E00',
           cream: '#F6F4F0',
           darkSurface: '#0B192C',
@@ -34,18 +35,19 @@ module.exports = {
           outlineVariant: '#EAEAEA'
         },
         slm: {
-          pine: '#1A56C4',         // Varsity Blue Primary
-          pineHover: '#1545A2',    // Darkened Varsity Blue
-          clay: '#B84D00',         // Championship Orange Accent
-          orange: '#B84D00',       // Championship Orange
-          orangeContainer: '#FFEEDB', // Soft Orange Surface
-          onOrangeContainer: '#2E0E00', // Dark Brown Text
-          paper: '#F6F4F0',        // League Cream Background
-          card: '#FFFFFF',         // Pure White Surface
-          surfaceVariant: '#F0EEEA', // Segmented Control Background
-          ink: '#111111',          // Ink Black Body Text
-          inkMuted: '#666666',     // Muted Secondary Text
-          border: '#EAEAEA'        // Outline Variant Border
+          pine: '#1A56C4',            // Primary Varsity Blue (#1A56C4)
+          pineHover: '#1545A2',       // Active Varsity Blue (#1545A2)
+          clay: '#B84D00',            // Championship Orange (#B84D00)
+          orange: '#B84D00',          // Championship Orange (#B84D00)
+          orangeBright: '#E8640A',    // Bright Orange (#E8640A)
+          orangeContainer: '#FFEEDB', // Soft Orange Tint (#FFEEDB)
+          onOrangeContainer: '#2E0E00',// Dark Brown Text
+          paper: '#F6F4F0',           // Background Cream
+          card: '#FFFFFF',            // White Surface
+          surfaceVariant: '#F0EEEA',
+          ink: '#111111',
+          inkMuted: '#666666',
+          border: '#EAEAEA'
         }
       },
       borderRadius: {
