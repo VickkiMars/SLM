@@ -19,6 +19,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Favicon handler to prevent 404 noise
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
@@ -105,12 +108,25 @@ app.post('/api/upload/translate', upload.single('file'), async (req, res) => {
     };
 
     global.translationQueue.push(job);
-    processJob(job);
+    await processJob(job);
 
-    return res.json({ message: 'Job queued successfully.', job_id: id, success: true });
+    const storedBlob = global.resultStore.get(id);
+    if (storedBlob && storedBlob.status === 'failed') {
+      return res.status(500).json({
+        error: storedBlob.error || 'TRANSLATION_FAILED',
+        detail: storedBlob.detail || 'Translation failed.'
+      });
+    }
+
+    return res.json({
+      message: 'Job processed successfully.',
+      job_id: id,
+      success: true,
+      result: storedBlob || null
+    });
   } catch (err) {
-    console.error(err);
-    return res.status(400).json({ error: 'UPLOAD_ERROR', detail: err.message || 'An unexpected error occurred.' });
+    console.error('[SLM] /api/upload/translate error:', err);
+    return res.status(500).json({ error: 'UPLOAD_ERROR', detail: err.message || 'An unexpected error occurred.' });
   }
 });
 
@@ -132,12 +148,25 @@ app.post('/api/text/translate', async (req, res) => {
     };
 
     global.translationQueue.push(job);
-    processJob(job);
+    await processJob(job);
 
-    return res.json({ message: 'Job queued successfully.', job_id: id, success: true });
+    const storedBlob = global.resultStore.get(id);
+    if (storedBlob && storedBlob.status === 'failed') {
+      return res.status(500).json({
+        error: storedBlob.error || 'TRANSLATION_FAILED',
+        detail: storedBlob.detail || 'Translation failed.'
+      });
+    }
+
+    return res.json({
+      message: 'Job processed successfully.',
+      job_id: id,
+      success: true,
+      result: storedBlob || null
+    });
   } catch (err) {
-    console.error(err);
-    return res.status(400).json({ error: 'TEXT_TRANSLATE_ERROR', detail: err.message || 'An unexpected error occurred.' });
+    console.error('[SLM] /api/text/translate error:', err);
+    return res.status(500).json({ error: 'TEXT_TRANSLATE_ERROR', detail: err.message || 'An unexpected error occurred.' });
   }
 });
 

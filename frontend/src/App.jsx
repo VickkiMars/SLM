@@ -92,7 +92,15 @@ export default function App() {
 
     try {
       const data = await translateText(payload);
-      if (data.job_id) {
+      if (data.result && (data.result.status === 'complete' || data.result.status === 'failed')) {
+        setIsProcessing(false);
+        if (data.result.status === 'failed') {
+          setError({ detail: data.result.detail || 'Translation failed.' });
+        } else {
+          setActiveResult(data.result);
+          archiveResult(data.result, payload);
+        }
+      } else if (data.job_id) {
         handleStartJob(data.job_id, payload);
       }
     } catch (err) {
@@ -106,14 +114,24 @@ export default function App() {
     setError(null);
     setActiveResult(null);
 
+    const payload = {
+      content: `[File: ${file.name}]`,
+      original_language: srcLang,
+      target_language: tgtLang,
+    };
+
     try {
       const data = await translateFile(file, srcLang, tgtLang, customVocab);
-      if (data.job_id) {
-        handleStartJob(data.job_id, {
-          content: `[File: ${file.name}]`,
-          original_language: srcLang,
-          target_language: tgtLang,
-        });
+      if (data.result && (data.result.status === 'complete' || data.result.status === 'failed')) {
+        setIsProcessing(false);
+        if (data.result.status === 'failed') {
+          setError({ detail: data.result.detail || 'Translation failed.' });
+        } else {
+          setActiveResult(data.result);
+          archiveResult(data.result, payload);
+        }
+      } else if (data.job_id) {
+        handleStartJob(data.job_id, payload);
       }
     } catch (err) {
       setIsProcessing(false);
