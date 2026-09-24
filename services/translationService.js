@@ -69,19 +69,25 @@ function parseCustomVocab(customVocabStr) {
  * Primary OpenAI Translation Engine with Structured Output Schema
  */
 async function translateWithOpenAI({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
+  console.log('[SLM STEP 2/4] Initializing OpenAI translation engine...');
   const openai = getOpenAIClient();
   if (!openai) {
-    console.warn('[translationService] No valid OPENAI_API_KEY found in environment. Falling back to local tokenization mapper.');
+    console.warn('[SLM STEP 2/4] No valid OPENAI_API_KEY found in environment. Falling back to local tokenization mapper.');
     return null;
   }
 
   const model = (process.env.OPENAI_MODEL_NAME || process.env.OPENAI_MODEL || 'gpt-4o-mini').trim();
+  console.log(`[SLM STEP 2/4] Selected LLM Model: "${model}"`);
+
   const messages = promptService.buildTranslationMessages({
     content,
     original_language,
     target_language,
     custom_vocab
   });
+
+  const startTime = Date.now();
+  console.log(`[SLM STEP 2/4] Sending completion request to OpenAI API (${model})...`);
 
   try {
     const completion = await openai.chat.completions.create({
@@ -90,18 +96,22 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
       response_format: { type: 'json_object' }
     });
 
+    const duration = Date.now() - startTime;
+    console.log(`[SLM STEP 2/4] Received OpenAI response in ${duration}ms`);
+
     const rawResponse = completion.choices[0]?.message?.content || '';
     if (!rawResponse) {
       throw new Error('OpenAI returned empty completion content.');
     }
 
     const parsed = JSON.parse(rawResponse);
+    console.log(`[SLM STEP 2/4] OpenAI output parsed successfully (${parsed.words?.length || 0} tokens received)`);
     return {
       full_translation: parsed.full_translation || '',
       words: Array.isArray(parsed.words) ? parsed.words : []
     };
   } catch (err) {
-    console.error('[translationService] OpenAI Translation Error:', err.message);
+    console.error('[SLM STEP 2/4] OpenAI Translation Error:', err.message);
     return null;
   }
 }
@@ -110,6 +120,7 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
  * Fallback Local Mapper when OpenAI key is absent or API is unreachable
  */
 async function fallbackLocalMapper({ content, original_language = 'Auto', target_language = 'English' }) {
+  console.log(`[SLM Fallback] Running local offline tokenizer mapper for "${original_language}"`);
   const targetCode = getIsoCode(target_language, 'en');
 
   const containsJapaneseKana = (text) => /[\u3040-\u309f\u30a0-\u30ff]/.test(text);
@@ -192,6 +203,7 @@ async function fallbackLocalMapper({ content, original_language = 'Auto', target
     words = tokens;
   }
 
+  console.log(`[SLM Fallback] Local tokenizer generated ${words.length} tokens.`);
   return {
     full_translation: fullTranslation,
     words
@@ -229,26 +241,42 @@ function enrichWordFlags(w) {
  * Main Translation Orchestrator using OpenAI with Local Fallback
  */
 async function translateAndMap({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
+  const startTime = Date.now();
+  console.log('\n=================== [SLM TRANSLATION START] ===================');
+  console.log('[SLM STEP 1/4] Input Request Details:');
+  console.log(`  - Content Length: ${content?.length || 0} characters`);
+  console.log(`  - Original Language: ${original_language}`);
+  console.log(`  - Target Language: ${target_language}`);
+  console.log(`  - Custom Vocab Present: ${Boolean(custom_vocab && custom_vocab.trim())}`);
+  console.log(`  - Sample Text: "${content?.slice(0, 60).replace(/\n/g, ' ')}..."`);
+
   if (!content || !content.trim()) {
+    console.error('[SLM ERROR] Content is required for translation.');
     throw new Error('Content is required for translation.');
   }
 
   const customMap = parseCustomVocab(custom_vocab);
+  if (Object.keys(customMap).length > 0) {
+    console.log(`[SLM STEP 1/4] Parsed ${Object.keys(customMap).length} custom vocabulary rules.`);
+  }
 
   // 1. Attempt OpenAI Structured Translation Engine
   let result = await translateWithOpenAI({ content, original_language, target_language, custom_vocab });
 
   // 2. Fallback to local tokenization mapper if OpenAI API fails or is unconfigured
   if (!result) {
+    console.log('[SLM STEP 2/4] OpenAI unavailable or failed — using local script tokenizers.');
     result = await fallbackLocalMapper({ content, original_language, target_language });
   }
 
   // 3. Post-process Custom Vocabulary Overrides
   if (Object.keys(customMap).length > 0 && Array.isArray(result.words)) {
+    let overrideCount = 0;
     result.words = result.words.map(w => {
       if (!w.source_word) return w;
       const override = customMap[w.source_word] || customMap[w.source_word.toLowerCase()];
       if (override) {
+        overrideCount++;
         return {
           ...w,
           translated_word: override.translated_word || w.translated_word,
@@ -257,12 +285,20 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
       }
       return w;
     });
+    console.log(`[SLM STEP 3/4] Applied custom vocabulary overrides to ${overrideCount} tokens.`);
   }
 
   // 4. Programmatically compute token flags (is_space, is_newline, is_punct)
   if (Array.isArray(result.words)) {
     result.words = result.words.map(enrichWordFlags);
+    console.log(`[SLM STEP 4/4] Programmatically enriched flags (is_space/is_newline/is_punct) for ${result.words.length} tokens.`);
   }
+
+  const totalDuration = Date.now() - startTime;
+  console.log(`[SLM TRANSLATION COMPLETE] Finished in ${totalDuration}ms`);
+  console.log(`  - Full Translation: "${result.full_translation?.slice(0, 80).replace(/\n/g, ' ')}..."`);
+  console.log(`  - Total Tokens Returned: ${result.words?.length || 0}`);
+  console.log('=================== [SLM TRANSLATION END] ===================\n');
 
   return result;
 }
