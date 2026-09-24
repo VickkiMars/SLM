@@ -33,11 +33,8 @@ OUTPUT SCHEMA:
   "words": [
     {
       "source_word": "string (exact token/word from source text)",
-      "translated_word": "string (meaning in target language, or empty for space/newline)",
-      "pronunciation": "string (pinyin, romaji, romanization, or IPA phonetics if non-Latin)",
-      "is_space": boolean,
-      "is_newline": boolean,
-      "is_punct": boolean
+      "translated_word": "string (meaning in target language, or empty for space/newline/punct)",
+      "pronunciation": "string (pinyin, romaji, romanization, or IPA phonetics if non-Latin)"
     }
   ]
 }`;

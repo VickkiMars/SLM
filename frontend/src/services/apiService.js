@@ -16,13 +16,18 @@ export async function translateText({ content, original_language, target_languag
   return data;
 }
 
-export async function translateFile(file, originalLanguage, targetLanguage) {
+export async function translateFile(file, originalLanguage, targetLanguage, customVocab) {
   const fd = new FormData();
   fd.append('file', file);
   fd.append('original_language', originalLanguage);
   fd.append('target_language', targetLanguage);
-  
-  const isoMap = { English:'eng', French:'fre', Spanish:'spa', Arabic:'ara', Swahili:'swa', Mandarin:'chi', Portuguese:'por', German:'ger', Hindi:'hin', Yoruba:'yor', Amharic:'amh', Hausa:'hau', Igbo:'ibo', Zulu:'zul' };
+  if (customVocab) fd.append('custom_vocab', customVocab);
+
+  const isoMap = {
+    English: 'eng', French: 'fre', Spanish: 'spa', Arabic: 'ara', Swahili: 'swa',
+    Mandarin: 'chi', Portuguese: 'por', German: 'ger', Hindi: 'hin',
+    Yoruba: 'yor', Amharic: 'amh', Hausa: 'hau', Igbo: 'ibo', Zulu: 'zul'
+  };
   fd.append('original_iso639-1_code', isoMap[originalLanguage] || 'eng');
 
   const res = await fetch(`${API_BASE}/api/upload/translate`, {
@@ -74,7 +79,7 @@ export function subscribeJobStatus(jobId, callbacks = {}) {
             onUpdate(blob);
           }
         } catch (e) {
-          // ignore malformed lines
+          // ignore malformed SSE lines
         }
       }
     }
@@ -85,42 +90,4 @@ export function subscribeJobStatus(jobId, callbacks = {}) {
   });
 
   return () => controller.abort();
-}
-
-export async function fetchHistory({ query = '', language = '', tag = '', bookmarked = false } = {}) {
-  const q = encodeURIComponent(query);
-  const lang = encodeURIComponent(language);
-  const bm = bookmarked ? 'true' : 'false';
-
-  const res = await fetch(`${API_BASE}/api/history?query=${q}&language=${lang}&bookmarked=${bm}`);
-  const data = await res.json();
-  if (!res.ok) throw data;
-  return data;
-}
-
-export async function fetchSessionById(sessionId) {
-  const res = await fetch(`${API_BASE}/api/history/${sessionId}`);
-  const data = await res.json();
-  if (!res.ok) throw data;
-  return data.session;
-}
-
-export async function updateSession(sessionId, updates) {
-  const res = await fetch(`${API_BASE}/api/history/${sessionId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updates)
-  });
-  const data = await res.json();
-  if (!res.ok) throw data;
-  return data.session;
-}
-
-export async function deleteSession(sessionId) {
-  const res = await fetch(`${API_BASE}/api/history/${sessionId}`, {
-    method: 'DELETE'
-  });
-  const data = await res.json();
-  if (!res.ok) throw data;
-  return data;
 }
