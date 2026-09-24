@@ -24,6 +24,7 @@ STRICT OUTPUT RULES:
 2. Do NOT wrap the JSON in markdown code blocks (\`\`\`json).
 3. No preamble, no postscript, no explanations outside the JSON object.
 4. Tokenize the input text while preserving spaces, newlines, and punctuation tokens as individual word objects.
+5. Do NOT generate pronunciation or translation for spaces, newlines, or punctuation tokens (set translated_word and pronunciation to empty string "").
 
 OUTPUT SCHEMA:
 {
@@ -33,8 +34,8 @@ OUTPUT SCHEMA:
   "words": [
     {
       "source_word": "string (exact token/word from source text)",
-      "translated_word": "string (meaning in target language, or empty for space/newline/punct)",
-      "pronunciation": "string (pinyin, romaji, romanization, or IPA phonetics if non-Latin)"
+      "translated_word": "string (meaning in target language; empty string \"\" for space/newline/punctuation)",
+      "pronunciation": "string (IPA phonetics for words only; empty string \"\" for space/newline/punctuation)"
     }
   ]
 }`;
