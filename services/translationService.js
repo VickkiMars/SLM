@@ -27,13 +27,13 @@ function getIsoCode(langName, defaultCode = 'en') {
  * Initialize OpenAI Client dynamically based on environment variables
  */
 function getOpenAIClient() {
-  const apiKey = process.env.OPENAI_API_KEY || process.env.FIKRA_API_KEY || process.env.FIKRA_APIKEY;
+  const apiKey = (process.env.OPENAI_API_KEY || process.env.FIKRA_API_KEY || process.env.FIKRA_APIKEY || '').trim();
   if (!apiKey || apiKey === 'placeholder') {
     return null;
   }
 
-  const options = { apiKey };
-  const baseURL = process.env.OPENAI_BASE_URL || process.env.FIKRA_BASE_URL;
+  const options = { apiKey, maxRetries: 1 };
+  const baseURL = (process.env.OPENAI_BASE_URL || process.env.FIKRA_BASE_URL || '').trim();
   if (baseURL) {
     options.baseURL = baseURL;
   }
@@ -75,7 +75,7 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
     return null;
   }
 
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  const model = (process.env.OPENAI_MODEL_NAME || process.env.OPENAI_MODEL || 'gpt-4o-mini').trim();
   const messages = promptService.buildTranslationMessages({
     content,
     original_language,
@@ -87,8 +87,7 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
     const completion = await openai.chat.completions.create({
       model,
       messages,
-      response_format: { type: 'json_object' },
-      temperature: 0.3
+      response_format: { type: 'json_object' }
     });
 
     const rawResponse = completion.choices[0]?.message?.content || '';
@@ -199,6 +198,33 @@ async function fallbackLocalMapper({ content, original_language = 'Auto', target
   };
 }
 
+const PUNCT_CHAR_REGEX = /^[.,/;':"<>?!@#$%^&*()_+\-=\[\]{}|\\`~«»„“”—–…¡¿\u2000-\u206F\u3000-\u303F]+$/;
+
+/**
+ * Programmatically determine token flags (is_space, is_newline, is_punct)
+ * eliminating the need for AI to output these 3 booleans.
+ */
+function enrichWordFlags(w) {
+  if (!w || typeof w !== 'object') return w;
+  const src = typeof w.source_word === 'string' ? w.source_word : '';
+
+  const is_newline = src.includes('\n') || src.includes('\r');
+  const is_space = !is_newline && /^\s+$/.test(src);
+  const is_punct = !is_newline && !is_space && (
+    PUNCT_CHAR_REGEX.test(src) ||
+    (!/\p{L}|\p{N}/u.test(src) && src.trim().length > 0)
+  );
+
+  return {
+    source_word: src,
+    translated_word: w.translated_word || '',
+    pronunciation: w.pronunciation || '',
+    is_space: Boolean(is_space),
+    is_newline: Boolean(is_newline),
+    is_punct: Boolean(is_punct)
+  };
+}
+
 /**
  * Main Translation Orchestrator using OpenAI with Local Fallback
  */
@@ -231,6 +257,11 @@ async function translateAndMap({ content, original_language = 'Auto', target_lan
       }
       return w;
     });
+  }
+
+  // 4. Programmatically compute token flags (is_space, is_newline, is_punct)
+  if (Array.isArray(result.words)) {
+    result.words = result.words.map(enrichWordFlags);
   }
 
   return result;

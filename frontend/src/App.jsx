@@ -5,6 +5,7 @@ import ReaderView from './components/ReaderView';
 import HistoryDrawer from './components/HistoryDrawer';
 import Toast from './components/Toast';
 import { translateText, translateFile, subscribeJobStatus } from './services/apiService';
+import { saveSession } from './services/historyStore';
 
 export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [toastMsg, setToastMsg] = useState('');
 
-  // Persist activeResult to localStorage
+  // Persist activeResult to localStorage so it survives page refreshes
   useEffect(() => {
     try {
       if (activeResult) {
@@ -38,7 +39,30 @@ export default function App() {
     }, 2800);
   };
 
-  const handleStartJob = (jobId) => {
+  // Auto-archive a completed translation blob to localStorage history
+  const archiveResult = (blob, sourcePayload) => {
+    try {
+      let output = blob.output;
+      if (typeof output === 'string') {
+        try { output = JSON.parse(output); } catch {}
+      }
+      const full_translation = output?.full_translation || '';
+      const words = Array.isArray(output?.words) ? output.words : [];
+
+      saveSession({
+        source_text: sourcePayload?.content || '',
+        original_language: sourcePayload?.original_language || 'Auto',
+        target_language: sourcePayload?.target_language || 'English',
+        full_translation,
+        token_metadata: { full_translation, words },
+        tags: [sourcePayload?.original_language || 'Reading'].filter(Boolean),
+      });
+    } catch (e) {
+      console.warn('[App] History archive failed:', e.message);
+    }
+  };
+
+  const handleStartJob = (jobId, sourcePayload) => {
     setIsProcessing(true);
     setError(null);
 
@@ -52,6 +76,7 @@ export default function App() {
       onComplete: (blob) => {
         setIsProcessing(false);
         setActiveResult(blob);
+        archiveResult(blob, sourcePayload);
       },
       onError: (err) => {
         setIsProcessing(false);
@@ -67,8 +92,16 @@ export default function App() {
 
     try {
       const data = await translateText(payload);
-      if (data.job_id) {
-        handleStartJob(data.job_id);
+      if (data.result && (data.result.status === 'complete' || data.result.status === 'failed')) {
+        setIsProcessing(false);
+        if (data.result.status === 'failed') {
+          setError({ detail: data.result.detail || 'Translation failed.' });
+        } else {
+          setActiveResult(data.result);
+          archiveResult(data.result, payload);
+        }
+      } else if (data.job_id) {
+        handleStartJob(data.job_id, payload);
       }
     } catch (err) {
       setIsProcessing(false);
@@ -76,15 +109,29 @@ export default function App() {
     }
   };
 
-  const handleSubmitFile = async (file, srcLang, tgtLang) => {
+  const handleSubmitFile = async (file, srcLang, tgtLang, customVocab) => {
     setIsProcessing(true);
     setError(null);
     setActiveResult(null);
 
+    const payload = {
+      content: `[File: ${file.name}]`,
+      original_language: srcLang,
+      target_language: tgtLang,
+    };
+
     try {
-      const data = await translateFile(file, srcLang, tgtLang);
-      if (data.job_id) {
-        handleStartJob(data.job_id);
+      const data = await translateFile(file, srcLang, tgtLang, customVocab);
+      if (data.result && (data.result.status === 'complete' || data.result.status === 'failed')) {
+        setIsProcessing(false);
+        if (data.result.status === 'failed') {
+          setError({ detail: data.result.detail || 'Translation failed.' });
+        } else {
+          setActiveResult(data.result);
+          archiveResult(data.result, payload);
+        }
+      } else if (data.job_id) {
+        handleStartJob(data.job_id, payload);
       }
     } catch (err) {
       setIsProcessing(false);
@@ -111,9 +158,7 @@ export default function App() {
       <div className="bg-radial-grid" aria-hidden="true" />
 
       {/* Global Header */}
-      <Navbar
-        onOpenHistory={() => setIsHistoryOpen(true)}
-      />
+      <Navbar onOpenHistory={() => setIsHistoryOpen(true)} />
 
       {/* Main Workspace Area */}
       {(() => {
@@ -122,8 +167,8 @@ export default function App() {
           <main className={`mt-16 flex-1 w-full mx-auto relative z-10 flex flex-col items-center ${
             isReadingMode ? 'px-2 sm:px-4 md:px-6 py-6 max-w-none' : 'px-4 sm:px-8 lg:px-12 py-10 max-w-5xl'
           }`}>
-            
-            {/* Hero Banner - clean headline without eyebrow pill */}
+
+            {/* Hero Banner */}
             {!isReadingMode && (
               <div className="mb-10 max-w-3xl w-full text-left">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight">

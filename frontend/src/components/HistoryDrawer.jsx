@@ -1,83 +1,53 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { fetchHistory, fetchSessionById, updateSession, deleteSession } from '../services/apiService';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { getAllSessions, getSessionById, updateSession, deleteSession } from '../services/historyStore';
 import { Clock, Search, X, Star, Trash2, ArrowUpRight } from 'lucide-react';
 
 export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showToast }) {
-  const { token } = useAuth();
   const [sessions, setSessions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [langFilter, setLangFilter] = useState('All');
   const [bookmarkedOnly, setBookmarkedOnly] = useState(false);
 
-  const loadHistory = useCallback(async () => {
-    if (!token) {
-      setSessions([]);
-      return;
-    }
+  // Derive filtered list synchronously — no network, no spinner needed
+  const filtered = useMemo(
+    () => getAllSessions({ query: searchQuery, language: langFilter, bookmarkedOnly }),
+    [sessions, searchQuery, langFilter, bookmarkedOnly]
+  );
 
-    setLoading(true);
-    setErrorMsg('');
-    try {
-      const res = await fetchHistory({
-        query: searchQuery,
-        language: langFilter,
-        bookmarked: bookmarkedOnly
-      }, token);
-
-      setSessions(res.sessions || []);
-    } catch (err) {
-      setErrorMsg(err.detail || err.message || 'Failed to load history.');
-    } finally {
-      setLoading(false);
-    }
-  }, [token, searchQuery, langFilter, bookmarkedOnly]);
+  const refresh = useCallback(() => {
+    setSessions(getAllSessions());
+  }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      loadHistory();
-    }
-  }, [isOpen, loadHistory]);
+    if (isOpen) refresh();
+  }, [isOpen, refresh]);
 
   if (!isOpen) return null;
 
-  const handleResume = async (sessionId) => {
-    try {
-      showToast('Loading reading session...');
-      const session = await fetchSessionById(sessionId, token);
-      if (session) {
-        onSelectSession(session);
-        onClose();
-        showToast('Session loaded ✓');
-      }
-    } catch (err) {
-      showToast('Failed to load session');
+  const handleResume = (sessionId) => {
+    const session = getSessionById(sessionId);
+    if (session) {
+      onSelectSession(session);
+      onClose();
+      showToast('Session loaded ✓');
+    } else {
+      showToast('Session not found');
     }
   };
 
-  const handleToggleBookmark = async (e, s) => {
+  const handleToggleBookmark = (e, s) => {
     e.stopPropagation();
-    try {
-      await updateSession(s.id, { is_bookmarked: !s.is_bookmarked }, token);
-      loadHistory();
-      showToast(s.is_bookmarked ? 'Bookmark removed' : 'Session bookmarked ★');
-    } catch (err) {
-      showToast('Update failed');
-    }
+    updateSession(s.id, { is_bookmarked: !s.is_bookmarked });
+    refresh();
+    showToast(s.is_bookmarked ? 'Bookmark removed' : 'Session bookmarked ★');
   };
 
-  const handleDelete = async (e, sessionId) => {
+  const handleDelete = (e, sessionId) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this reading session?')) return;
-    try {
-      await deleteSession(sessionId, token);
-      loadHistory();
-      showToast('Session deleted');
-    } catch (err) {
-      showToast('Delete failed');
-    }
+    deleteSession(sessionId);
+    refresh();
+    showToast('Session deleted');
   };
 
   return (
@@ -86,6 +56,7 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
       onClick={(e) => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
+      aria-label="Reading History"
     >
       <div className="drawer-container w-full max-w-md flex flex-col gap-4 rounded-t-3xl sm:rounded-3xl max-h-[88vh] sm:max-h-[calc(100vh-84px)] overflow-y-auto p-4 sm:p-6">
         {/* Header */}
@@ -99,6 +70,7 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
           <button
             onClick={onClose}
             className="p-1.5 rounded-xl text-[#666666] hover:text-[#111111] hover:bg-[#F0EEEA] transition border border-[#CCCCCC]"
+            aria-label="Close history drawer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -106,7 +78,6 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
 
         {/* Controls */}
         <div className="flex flex-col gap-2.5">
-          {/* Search Input */}
           <div className="relative">
             <input
               type="text"
@@ -118,7 +89,6 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
             <Search className="w-3.5 h-3.5 text-[#666666] absolute left-3 top-3 pointer-events-none" />
           </div>
 
-          {/* Filters */}
           <div className="flex items-center gap-2">
             <select
               value={langFilter}
@@ -151,23 +121,14 @@ export default function HistoryDrawer({ isOpen, onClose, onSelectSession, showTo
 
         {/* Sessions List */}
         <div className="flex flex-col gap-2.5 min-h-[160px]">
-          {!token ? (
+          {filtered.length === 0 ? (
             <p className="text-center py-8 text-slm-inkMuted text-xs leading-relaxed">
-              Please save your Bearer token or log in first to view reading history.
-            </p>
-          ) : loading ? (
-            <div className="flex items-center justify-center py-8 text-slm-inkMuted gap-2">
-              <div className="spinner-ring" />
-              <span className="text-xs font-medium">Loading history...</span>
-            </div>
-          ) : errorMsg ? (
-            <p className="text-center py-8 text-red-600 text-xs leading-relaxed">{errorMsg}</p>
-          ) : sessions.length === 0 ? (
-            <p className="text-center py-8 text-slm-inkMuted text-xs leading-relaxed">
-              No reading sessions match your filters.<br />Translate text or upload a document to build history!
+              {sessions.length === 0
+                ? <>No reading sessions yet.<br />Translate text or upload a document to build history!</>
+                : 'No sessions match your filters.'}
             </p>
           ) : (
-            sessions.map((s) => (
+            filtered.map((s) => (
               <div
                 key={s.id}
                 onClick={() => handleResume(s.id)}
