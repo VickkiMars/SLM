@@ -2,6 +2,7 @@ const { OpenAI } = require('openai');
 const promptService = require('./promptService');
 const japaneseMapper = require('./japaneseMapper');
 const chineseMapper = require('./chineseMapper');
+const parser = require('./parser');
 const { transliterateKorean, transliterateArabic, transliterateHebrew } = require('./transliterationHelper');
 
 // Language ISO codes helper
@@ -66,10 +67,10 @@ function parseCustomVocab(customVocabStr) {
 }
 
 /**
- * Primary OpenAI Translation Engine with Structured Output Schema
+ * Primary OpenAI Translation & Transliteration Engine (No JSON output format)
  */
 async function translateWithOpenAI({ content, original_language = 'Auto', target_language = 'English', custom_vocab }) {
-  console.log('[SLM STEP 2/4] Initializing OpenAI translation engine...');
+  console.log('[SLM STEP 2/4] Initializing OpenAI translation engine (Format: romanized|english, No JSON)...');
   const openai = getOpenAIClient();
   if (!openai) {
     console.warn('[SLM STEP 2/4] No valid OPENAI_API_KEY found in environment. Falling back to local tokenization mapper.');
@@ -92,8 +93,7 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
   try {
     const completion = await openai.chat.completions.create({
       model,
-      messages,
-      response_format: { type: 'json_object' }
+      messages
     });
 
     const duration = Date.now() - startTime;
@@ -104,12 +104,11 @@ async function translateWithOpenAI({ content, original_language = 'Auto', target
       throw new Error('OpenAI returned empty completion content.');
     }
 
-    const parsed = JSON.parse(rawResponse);
-    console.log(`[SLM STEP 2/4] OpenAI output parsed successfully (${parsed.words?.length || 0} tokens received)`);
-    return {
-      full_translation: parsed.full_translation || '',
-      words: Array.isArray(parsed.words) ? parsed.words : []
-    };
+    console.log(`[SLM STEP 2/4] Parsing raw AI output with parser.buildOutputResult...`);
+    const parsedResult = parser.buildOutputResult(rawResponse, content, original_language);
+    console.log(`[SLM STEP 2/4] Output parsed successfully (${parsedResult.words?.length || 0} tokens generated)`);
+
+    return parsedResult;
   } catch (err) {
     console.error('[SLM STEP 2/4] OpenAI Translation Error:', err.message);
     return null;

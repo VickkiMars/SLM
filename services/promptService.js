@@ -4,7 +4,7 @@ const path = require('path');
 const PROMPT_FILE_PATH = path.join(process.cwd(), 'data', 'prompt.txt');
 
 /**
- * Load base prompt rules from file or fallback default
+ * Load base system prompt enforcing strict line-by-line output format
  */
 function getSystemPrompt() {
   if (fs.existsSync(PROMPT_FILE_PATH)) {
@@ -16,29 +16,28 @@ function getSystemPrompt() {
     }
   }
 
-  return `You are a professional multilingual translation engine and linguistic mapper.
-Your task is to translate the source text into the target language and provide a token-by-token character/word breakdown.
+  return `You are a professional multilingual transliterator and translation engine.
+Your task is to analyze the source text word by word (or token by token) and output EACH word's romanization and English meaning.
 
 STRICT OUTPUT RULES:
-1. Respond ONLY with a valid JSON object matching the requested schema.
-2. Do NOT wrap the JSON in markdown code blocks (\`\`\`json).
-3. No preamble, no postscript, no explanations outside the JSON object.
-4. Tokenize the input text while preserving spaces, newlines, and punctuation tokens as individual word objects.
-5. Do NOT generate pronunciation or translation for spaces, newlines, or punctuation tokens (set translated_word and pronunciation to empty string "").
+1. OUTPUT FORMAT: Output ONLY lines in the exact format:
+   romanized_language | english meaning
+2. DO NOT OUTPUT JSON. JSON IS STRICTLY FORBIDDEN.
+3. DO NOT output markdown code blocks (no \`\`\` or \`\`\`text).
+4. DO NOT output any preamble, postscript, intro, title, or explanations.
+5. NO EXTRA TOKENS. Output ONLY the formatted pairs line by line.
+6. Provide one line for each sequential word in the input text.
 
-OUTPUT SCHEMA:
-{
-  "source_language": "string (detected or requested original language)",
-  "target_language": "string (target language)",
-  "full_translation": "string (complete, fluent translation of the whole text)",
-  "words": [
-    {
-      "source_word": "string (exact token/word from source text)",
-      "translated_word": "string (meaning in target language; empty string \"\" for space/newline/punctuation)",
-      "pronunciation": "string (IPA phonetics for words only; empty string \"\" for space/newline/punctuation)"
-    }
-  ]
-}`;
+EXAMPLES BY LANGUAGE:
+- Chinese: pinyin|english
+  Example line: dào|the Word
+- Japanese: Romaji|english
+  Example line: sakura|cherry blossom
+- Korean: Romaja|english
+  Example line: annyeong|hello
+- Languages without a non-Latin writing system (e.g., German, French, Spanish): german|english or french|english
+  Example (German): hallo|hello
+  Example (French): bonjour|hello`;
 }
 
 /**
@@ -47,14 +46,15 @@ OUTPUT SCHEMA:
 function buildTranslationMessages({ content, original_language = 'Auto', target_language = 'English', custom_vocab = '' }) {
   const systemPrompt = getSystemPrompt();
 
-  let userInstruction = `Translate the following text from ${original_language} to ${target_language}.\n`;
-  userInstruction += `Provide the complete translation and token breakdown.\n`;
+  let userInstruction = `Analyze the following text (Source Language: ${original_language}, Target: ${target_language}).\n`;
+  userInstruction += `Output each word's breakdown in the exact format: romanized_language | english meaning\n`;
+  userInstruction += `Do NOT use JSON. No extra tokens. No markdown formatting.\n`;
 
   if (custom_vocab && typeof custom_vocab === 'string' && custom_vocab.trim()) {
     userInstruction += `\nCUSTOM VOCABULARY OVERRIDES (Apply these exact definitions for matching terms):\n${custom_vocab.trim()}\n`;
   }
 
-  userInstruction += `\nSOURCE TEXT TO TRANSLATE:\n"""\n${content}\n"""`;
+  userInstruction += `\nSOURCE TEXT TO PROCESS:\n${content}`;
 
   return [
     { role: 'system', content: systemPrompt },
@@ -66,3 +66,4 @@ module.exports = {
   getSystemPrompt,
   buildTranslationMessages
 };
+

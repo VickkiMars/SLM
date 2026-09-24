@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Copy, Check, BookOpen, Sparkles, ArrowLeft } from 'lucide-react';
+import { Copy, Check, BookOpen, ArrowLeft } from 'lucide-react';
 import WordBreakdown from './WordBreakdown';
 
 const LOADING_STEPS = [
-  "Mapping meaning & phonetics across scripts...",
+  "Mapping transliterations & English meanings...",
   "Tokenizing character units & vocabulary...",
-  "Synthesizing phonetic map & translations..."
+  "Synthesizing interlinear layout..."
 ];
 
 export default function ReaderView({ result, isProcessing, error, showToast, onBack }) {
@@ -15,7 +15,7 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
   const [loadingStepIdx, setLoadingStepIdx] = useState(0);
   const readerRef = useRef(null);
 
-  // Rotate loading message every 2.5s for Doherty Threshold feedback
+  // Rotate loading message every 2.5s for feedback
   useEffect(() => {
     if (!isProcessing) {
       setLoadingStepIdx(0);
@@ -29,12 +29,12 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
 
   if (isProcessing) {
     return (
-      <section className="w-full max-w-2xl bg-white rounded-3xl border-2 border-slm-pine/60 shadow-block p-8 flex flex-col items-center justify-center gap-3 text-center">
+      <section className="w-full max-w-2xl bg-white rounded-3xl border-2 border-[#1A56C4]/30 shadow-block p-8 flex flex-col items-center justify-center gap-3 text-center">
         <div className="spinner-ring" />
-        <p className="font-serif font-bold text-sm text-slm-pine animate-pulse transition-all duration-300">
+        <p className="font-serif font-bold text-sm text-[#1A56C4] animate-pulse transition-all duration-300">
           {LOADING_STEPS[loadingStepIdx]}
         </p>
-        <p className="text-xs text-slm-inkMuted">This usually takes 3–10 seconds.</p>
+        <p className="text-xs text-[#666666]">This usually takes 3–8 seconds.</p>
       </section>
     );
   }
@@ -43,7 +43,7 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
     return (
       <section className="w-full max-w-2xl bg-white rounded-3xl border-2 border-red-300 shadow-block p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h4 className="font-serif font-bold text-sm text-red-700">Translation Error</h4>
+          <h4 className="font-serif font-bold text-sm text-red-700">Processing Error</h4>
           {onBack && (
             <button
               onClick={onBack}
@@ -55,14 +55,14 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
           )}
         </div>
         <p className="text-xs text-red-600 leading-relaxed">{error.detail || error.message || 'An unexpected error occurred.'}</p>
-        {error.hint && <p className="text-[11px] text-slm-inkMuted italic">{error.hint}</p>}
+        {error.hint && <p className="text-[11px] text-[#666666] italic">{error.hint}</p>}
       </section>
     );
   }
 
   if (!result) return null;
 
-  // Parse result payload safely across live streams and history restoration
+  // Parse result payload safely
   let parsed = null;
   try {
     if (typeof result.output === 'string') {
@@ -89,7 +89,7 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
   const handleTokenClick = (e, word) => {
     e.stopPropagation();
 
-    // Tapping the same element again removes the tooltip!
+    // Clicking the same active word toggles popover off
     if (activeToken === word) {
       setActiveToken(null);
       return;
@@ -98,21 +98,15 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
     const rect = e.currentTarget.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
 
-    let popoverWidth = 150;
-    let popoverHeight = 58;
+    let popoverWidth = 160;
+    let popoverHeight = 70;
 
-    let left = rect.left + rect.width / 2 - popoverWidth / 2;
-    let top = rect.top - popoverHeight - 8;
+    let left = rect.left + rect.width / 2;
+    let top = rect.top - 12;
     let below = false;
 
-    // Viewport boundary check
-    if (left < 12) left = 12;
-    if (left + popoverWidth > viewportWidth - 12) {
-      left = viewportWidth - popoverWidth - 12;
-    }
-
-    if (top < 10) {
-      top = rect.bottom + 8;
+    if (top < 100) {
+      top = rect.bottom + 12;
       below = true;
     }
 
@@ -128,13 +122,13 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
       onClick={() => setActiveToken(null)}
       className="w-full flex flex-col gap-6 relative px-1 sm:px-3 md:px-6 py-2 sm:py-4"
     >
-      {/* Header with Back Button */}
+      {/* Header Bar */}
       <div className="flex items-center justify-between pb-4 border-b border-[#EAEAEA]">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
               onClick={onBack}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CCCCCC] bg-white hover:bg-[#F0EEEA] text-[#111111] text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 shadow-2xs focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CCCCCC] bg-white hover:bg-[#F0EEEA] text-[#111111] text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
               title="Return to input form"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-[#1A56C4]" />
@@ -143,110 +137,132 @@ export default function ReaderView({ result, isProcessing, error, showToast, onB
           )}
           <div className="flex flex-wrap items-center gap-2 text-[#111111]">
             <BookOpen className="w-4 h-4 text-[#1A56C4]" />
-            <h3 className="font-serif font-extrabold text-base tracking-tight">Interactive Reading View</h3>
-            {result?.progress && result.status !== 'complete' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#FFEEDB] text-[#2E0E00] border border-[#B84D00]/30 text-[10px] font-serif font-extrabold uppercase tracking-wider animate-pulse">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#B84D00] animate-ping" />
-                <span>Batch {result.progress.current_batch} of {result.progress.total_batches}...</span>
-              </span>
-            )}
+            <h3 className="font-serif font-extrabold text-base tracking-tight">Interlinear Reading View</h3>
           </div>
         </div>
         <button
           onClick={handleCopy}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CCCCCC] text-[#111111] hover:border-[#1A56C4] hover:text-[#1A56C4] hover:bg-[#E8EFFF]/40 text-xs font-serif font-extrabold uppercase tracking-wider transition active:scale-95 bg-white focus-visible:ring-2 focus-visible:ring-[#1A56C4] focus-visible:outline-none"
         >
-          {copied ? <Check className="w-3.5 h-3.5 text-[#B84D00]" /> : <Copy className="w-3.5 h-3.5 text-[#1A56C4]" />}
+          {copied ? <Check className="w-3.5 h-3.5 text-[#E8640A]" /> : <Copy className="w-3.5 h-3.5 text-[#1A56C4]" />}
           <span>{copied ? 'Copied' : 'Copy'}</span>
         </button>
       </div>
 
-      {/* Interactive Hero Character Token Map */}
+      {/* Interlinear Reading Board matching exact layout & positioning */}
       {words.length > 0 && (
         <div className="flex flex-col gap-3 w-full">
-          <div className="flex items-center justify-end">
-            <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">Tap or click any segment to inspect</span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-serif font-bold uppercase tracking-wider text-[#E8640A]">
+              Romanized Script &amp; Direct Glossing
+            </span>
+            <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
+              Click any token for callout popover
+            </span>
           </div>
 
           <div
             dir={isRtl ? 'rtl' : 'ltr'}
-            className="w-full py-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans text-[#111111] leading-relaxed sm:leading-loose tracking-tight select-none border-b border-[#EAEAEA] pb-8"
+            className="w-full py-6 flex flex-wrap items-end gap-x-2 sm:gap-x-4 gap-y-6 select-none border-b border-[#EAEAEA] pb-10 min-h-[160px]"
           >
             {words.map((w, idx) => {
               if (w.is_newline || w.source_word === '\n') {
-                return <br key={idx} />;
+                return <div key={idx} className="basis-full h-0" />;
               }
 
               if (w.is_space) {
-                return <span key={idx} className="whitespace-pre">{w.source_word}</span>;
+                return <span key={idx} className="w-3 sm:w-4 inline-block" />;
               }
 
               if (w.is_punct) {
-                return <span key={idx} className="text-[#111111] select-text">{w.source_word}</span>;
+                return (
+                  <span
+                    key={idx}
+                    className="text-2xl sm:text-3xl font-serif text-[#111111] pb-1 px-0.5 select-text self-end"
+                  >
+                    {w.source_word}
+                  </span>
+                );
               }
 
               const isSelected = activeToken === w;
+              const hasPron = Boolean(w.pronunciation);
+
               return (
-                <span
+                <div
                   key={idx}
                   tabIndex={0}
                   role="button"
                   aria-label={`Inspect token ${w.source_word}`}
                   onClick={(e) => handleTokenClick(e, w)}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleTokenClick(e, w)}
-                  className={`token inline cursor-pointer outline-none transition-all ${
+                  className={`inline-flex flex-col items-center justify-end cursor-pointer outline-none transition-all duration-200 px-2.5 py-1.5 rounded-2xl group ${
                     isSelected
-                      ? 'underline decoration-[3.5px] underline-offset-8 decoration-[#1A56C4] text-[#1A56C4] font-extrabold'
-                      : 'text-[#111111] hover:underline hover:decoration-2 hover:underline-offset-8 hover:decoration-[#1A56C4]/60'
+                      ? 'border-2 border-[#E8640A] bg-[#FFF8F2] shadow-sm transform -translate-y-1'
+                      : 'border-2 border-transparent hover:border-[#1A56C4]/30 hover:bg-[#E8EFFF]/40 hover:-translate-y-0.5'
                   }`}
-                  data-symbol={w.source_word || ''}
-                  data-pron={w.pronunciation || ''}
-                  data-meaning={w.translated_word || ''}
                 >
-                  {w.source_word || ''}
-                </span>
+                  {/* Top Line: Romanized Script (Pinyin / Romaji / German / French) */}
+                  <span className={`text-xs sm:text-sm font-sans font-bold tracking-tight mb-1 text-center transition-colors ${
+                    isSelected ? 'text-[#E8640A]' : 'text-[#E8640A] group-hover:text-[#1A56C4]'
+                  }`}>
+                    {hasPron ? w.pronunciation : '\u00A0'}
+                  </span>
+
+                  {/* Bottom Line: Source Script Character / Word */}
+                  <span className={`text-2xl sm:text-3xl md:text-4xl font-serif leading-none tracking-tight text-center transition-colors ${
+                    isSelected ? 'text-[#E8640A] font-extrabold' : 'text-[#111111]'
+                  }`}>
+                    {w.source_word}
+                  </span>
+                </div>
               );
             })}
           </div>
         </div>
       )}
 
-      {/* Supporting Full Translation Section */}
-      <div className="flex flex-col gap-2 w-full">
-        <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
-          Complete English Translation
-        </span>
-        <div className="w-full py-3 text-base sm:text-lg md:text-xl font-sans text-[#333333] leading-relaxed font-normal border-b border-[#EAEAEA] pb-6">
-          {fullText}
-        </div>
-      </div>
-
-      {/* Compact Floating Tooltip Popover */}
+      {/* Floating Callout Speech-Bubble Popover */}
       {activeToken && (
         <div
-          style={{ left: `${popoverPos.left}px`, top: `${popoverPos.top}px` }}
-          className="fixed z-[250] bg-[#0B192C] text-white rounded-2xl py-2.5 px-3.5 shadow-2xl flex flex-col items-center justify-center gap-1 text-center min-w-[130px] max-w-[190px] border border-white/15 animate-fadeIn pointer-events-auto"
+          style={{
+            left: `${popoverPos.left}px`,
+            top: `${popoverPos.top}px`,
+            transform: popoverPos.below ? 'translate(-50%, 0)' : 'translate(-50%, -100%)'
+          }}
+          className={`fixed z-[300] bg-white border-2 border-[#E8640A] rounded-2xl px-4 py-3 shadow-2xl flex flex-col items-center justify-center gap-0.5 text-center min-w-[140px] max-w-[220px] pointer-events-auto animate-fadeIn ${
+            popoverPos.below
+              ? 'after:content-[""] after:absolute after:bottom-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-b-[#E8640A]'
+              : 'after:content-[""] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-[#E8640A]'
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="font-serif font-black text-sm text-white leading-tight">
-            {activeToken.source_word}
+          {/* Top Line: Romanized / Pronunciation */}
+          <div className="font-sans font-extrabold text-sm text-[#E8640A] leading-tight">
+            {activeToken.pronunciation || activeToken.source_word}
           </div>
-          {activeToken.pronunciation && (
-            <div className="font-mono text-xs text-[#93C5FD] font-semibold leading-tight">
-              {activeToken.pronunciation}
-            </div>
-          )}
-          {activeToken.translated_word && activeToken.translated_word.toLowerCase() !== activeToken.pronunciation?.toLowerCase() && (
-            <div className="font-serif font-extrabold text-xs text-[#FFEEDB] leading-snug">
+
+          {/* Bottom Line: English Meaning in Italics */}
+          {activeToken.translated_word && (
+            <div className="font-serif italic text-sm text-[#333333] font-medium leading-snug mt-0.5">
               {activeToken.translated_word}
             </div>
           )}
         </div>
       )}
 
-      {/* Word Breakdown Component */}
+      {/* Full English Translation Section */}
+      <div className="flex flex-col gap-2 w-full mt-2">
+        <span className="text-[10px] font-serif font-extrabold uppercase tracking-wider text-[#666666]">
+          Complete English Meaning
+        </span>
+        <div className="w-full py-3 text-base sm:text-lg md:text-xl font-sans text-[#333333] leading-relaxed font-normal border-b border-[#EAEAEA] pb-6">
+          {fullText}
+        </div>
+      </div>
+
+      {/* Word Breakdown Table Component */}
       <WordBreakdown words={words} />
     </section>
   );
 }
-
